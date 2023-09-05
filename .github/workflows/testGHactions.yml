@@ -1,6 +1,6 @@
 name: edc_deployment
 env:
-  SNOWSQL_ACCOUNT: ${{ SNOWSQL_ACCOUNT }}
+  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
   SNOWSQL_USER: ${{ SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
   SNOWSQL_ROLE: ${{ SNOWSQL_ROLE }}
