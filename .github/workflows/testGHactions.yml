@@ -38,10 +38,8 @@ jobs:
         AS
         $$
         BEGIN
-            -- Create a sample table named "my_sample_table"
-            CREATE OR REPLACE TABLE gitactions_table (id INT, name STRING, age INT);
-            -- Return a success message
-            RETURN 'Sample table created successfully.';
+        CREATE OR REPLACE TABLE gitactions_table (id INT, name STRING, age INT);
+        RETURN 'Sample table created successfully.';
         END;
         $$
         EOF
