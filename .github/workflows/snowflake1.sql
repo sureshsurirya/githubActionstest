@@ -6,7 +6,7 @@ AS
 $$
 BEGIN
     -- Create a sample table named "my_sample_table"
-    CREATE OR REPLACE TABLE my_sample_table (id INT,name STRING,age INT);
+    CREATE OR REPLACE TABLE Actions (id INT,name STRING,age INT);
 
     -- Return a success message
     RETURN 'Sample table created successfully.';
