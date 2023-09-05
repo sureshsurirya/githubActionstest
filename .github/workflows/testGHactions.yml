@@ -30,7 +30,7 @@ jobs:
         run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
       - name: Execute SQL against Snowflake
         run: |
-          ~/snowflake/snowsql -o log_level=DEBUG -d $TGT_DB -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE -s $TGT_SCHEMA <<EOF
+          ~/snowflake/snowsql -o log_level=DEBUG -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE <<EOF
           CREATE OR REPLACE PROCEDURE CREATE_SAMPLE_TABLE()
           RETURNS STRING
           LANGUAGE SQL
@@ -51,6 +51,6 @@ jobs:
           EOF
       - name: Call the Stored Procedure
         run: |
-          ~/snowflake/snowsql -o log_level=DEBUG -d $TGT_DB -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE -s $TGT_SCHEMA <<EOF
+          ~/snowflake/snowsql -o log_level=DEBUG -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE <<EOF
           CALL CREATE_SAMPLE_TABLE();
           EOF
