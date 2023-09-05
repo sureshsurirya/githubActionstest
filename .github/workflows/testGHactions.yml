@@ -8,29 +8,26 @@ env:
   SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
   SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
 
-​
 # Controls when the workflow will run
 on:
   # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:                                                
-jobs:                         
-  executequery:                           
-    name: EDC Deployment Job                          
-    runs-on: ubuntu-latest                           
+  workflow_dispatch:
+
+jobs:
+  executequery:
+    name: EDC Deployment Job
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Download SnowSQL
-      run:  curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+      run: curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
     - name: Install SnowSQL
       run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
     - name: Test installation
-      run:  ~/snowflake/snowsql -v
+      run: ~/snowflake/snowsql -v
     - name: Variable Substitution
       run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
-      
     - name: Execute SQL against Snowflake
-           run:  |
-        echo "$(pwd)"
-                 ~/snowflake/snowsql -D CUST_RAW_DB=$TGT_DB -D CUST_SCHEMA=$TGT_SCHEMA -f snowflake_script.sql
-        done
+      run: |
+        ~/snowflake/snowsql -D CUST_RAW_DB=$TGT_DB -D CUST_SCHEMA=$TGT_SCHEMA -f snowflake_script.sql
