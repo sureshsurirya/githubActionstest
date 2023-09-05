@@ -5,8 +5,8 @@ env:
   SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
   SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
   SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
-  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
-  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
+  SNOWSQL_DATABASE: ${{ vars.SNOWSQL_DATABASE }}
+  SNOWSQL_SCHEMA: ${{ vars.SNOWSQL_SCHEMA }}
 
 # Controls when the workflow will run
 on:
