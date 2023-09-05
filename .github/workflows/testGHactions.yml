@@ -1,10 +1,10 @@
 name: edc_deployment
 env:
-  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
-  SNOWSQL_WAREHOUSE: ${{ secrets.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
   SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
   SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
 
@@ -18,39 +18,30 @@ jobs:
     name: EDC Deployment Job
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download SnowSQL
-        run: curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
-      - name: Install SnowSQL
-        run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
-      - name: Test installation
-        run: ~/snowflake/snowsql -v
-      - name: Variable Substitution
-        run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
-      - name: Execute SQL against Snowflake
-        run: |
-          ~/snowflake/snowsql -o log_level=DEBUG -u $SNOWSQL_USER <<EOF
-          CREATE OR REPLACE PROCEDURE CREATE_SAMPLE_TABLE()
-          RETURNS STRING
-          LANGUAGE SQL
-          EXECUTE AS CALLER
-          AS
-          $$
-          BEGIN
-              -- Create a sample table named "sample_table1"
-              CREATE OR REPLACE TABLE sample_table1 (
-                  id INT,
-                  name STRING,
-                  age INT
-              );
-              -- Return a success message
-              RETURN 'Sample table created successfully.';
-          END;
-          $$
-          EOF
-      - name: Call the Stored Procedure
-        run: |
-          ~/snowflake/snowsql -o log_level=DEBUG -u $ SNOWSQL_USER <<EOF
-          CALL CREATE_SAMPLE_TABLE();
-          EOF
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Download SnowSQL
+      run: curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+    - name: Install SnowSQL
+      run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+    - name: Test installation
+      run: ~/snowflake/snowsql -v
+    - name: Variable Substitution
+      run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
+    - name: Execute SQL against Snowflake
+      run: |
+        ~/snowflake/snowsql -o log_level=DEBUG -d $SNOWSQL_DATABASE -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE -s $SNOWSQL_SCHEMA <<EOF
+        CREATE OR REPLACE PROCEDURE CREATE_SAMPLE_TABLE22()
+        RETURNS STRING
+        LANGUAGE SQL
+        EXECUTE AS CALLER
+        AS
+        $$
+        BEGIN
+            -- Create a sample table named "my_sample_table"
+            CREATE OR REPLACE TABLE gitactions_table (id INT, name STRING, age INT);
+            -- Return a success message
+            RETURN 'Sample table created successfully.';
+        END;
+        $$
+        EOF
