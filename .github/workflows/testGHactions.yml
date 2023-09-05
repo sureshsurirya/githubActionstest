@@ -32,5 +32,5 @@ jobs:
     - name: Execute SQL against Snowflake
            run:  |
         echo "$(pwd)"
-                 ~/snowflake/snowsql -D CUST_RAW_DB=$TGT_DB -D CUST_SCHEMA=$TGT_SCHEMA -f /home/runner/work/datascience-edc/datascience-edc/snowflake/views/$i;
+                 ~/snowflake/snowsql -D CUST_RAW_DB=$TGT_DB -D CUST_SCHEMA=$TGT_SCHEMA -f snowflake_script.sql
         done
