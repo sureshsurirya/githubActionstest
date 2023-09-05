@@ -51,6 +51,6 @@ jobs:
           EOF
       - name: Call the Stored Procedure
         run: |
-          ~/snowflake/snowsql -o log_level=DEBUG -d $TGT_DB -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE -s $TGT_SCHEMA <<EOF
+          ~/snowflake/snowsql -o log_level=DEBUG -u $SNOWSQL_USER -r $SNOWSQL_ROLE -w $SNOWSQL_WAREHOUSE <<EOF
           CALL CREATE_SAMPLE_TABLE();
           EOF
