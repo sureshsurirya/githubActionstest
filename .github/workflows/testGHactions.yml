@@ -2,7 +2,7 @@ name: edc_deployment
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
   SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
+  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
   SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
   SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
   SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
