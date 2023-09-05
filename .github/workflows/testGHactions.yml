@@ -1,12 +1,12 @@
 name: edc_deployment
 env:
-  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+  SNOWSQL_ACCOUNT: ${{ SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
-  SNOWSQL_WAREHOUSE: ${{ secrets.SNOWSQL_WAREHOUSE }}
-  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
-  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
+  SNOWSQL_ROLE: ${{ SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ TGT_DB }}
+  SNOWSQL_SCHEMA: ${{ TGT_SCHEMA }}
 
 # Controls when the workflow will run
 on:
