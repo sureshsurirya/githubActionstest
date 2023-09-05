@@ -30,4 +30,4 @@ jobs:
       run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
     - name: Execute SQL against Snowflake
       run: |
-        ~/snowflake/snowsql -o log_level=DEBUG -D CUST_RAW_DB=$TGT_DB -D CUST_SCHEMA=$TGT_SCHEMA -f snowflake1.sql
+        ~/snowflake/snowsql -o log_level=DEBUG -D CUST_RAW_DB=$TGT_DB -D CUST_SCHEMA=$TGT_SCHEMA -f /home/runner/work/githubActionstest/githubActionstest/snowflake1.sql
