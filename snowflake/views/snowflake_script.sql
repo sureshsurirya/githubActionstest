@@ -11,8 +11,8 @@ DECLARE
   READER_NAME STRING;
   SHARE_NAME STRING;
 BEGIN
-  READER_NAME := &{CUST_NAME} || '_reader';
-  SHARE_NAME  := &{CUST_NAME} || '_share';
+  SET READER_NAME := &{CUST_NAME} || '_reader';
+  SET SHARE_NAME  := &{CUST_NAME} || '_share';
 
   SQL_STMT := 'CREATE MANAGED ACCOUNT ' || READER_NAME || '
                ADMIN_NAME = ''ADMIN'' ADMIN_PASSWORD = ''Welcome@123'' TYPE = READER';
