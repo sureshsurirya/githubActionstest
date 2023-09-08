@@ -34,5 +34,5 @@ jobs:
       
     - name: Execute SQL against Snowflake
       run:  |
-          ~/snowflake/snowsql -D $SNOWSQL_USER -D $SNOWSQL_RAW_DB -D $SNOWSQL_SRC_SCHEMA -f /home/runner/work/githubActionstest/githubActionstest/snowflake/snowflake_script.sql;
+          ~/snowflake/snowsql -D $SNOWSQL_USER -f /home/runner/work/githubActionstest/githubActionstest/snowflake/snowflake_script.sql;
           done
