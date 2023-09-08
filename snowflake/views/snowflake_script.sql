@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE &{CUST_RAW_DB}.&{CUST_RAW_SCHEMA}.reader_from_actions()
+CREATE OR REPLACE PROCEDURE &{CUST_RAW_DB}.&{CUST_SCHEMA}.reader_from_actions()
   RETURNS STRING
   LANGUAGE SQL
   EXECUTE AS CALLER
@@ -14,14 +14,14 @@ BEGIN
                ADMIN_PASSWORD = ''Welcome@123'' 
                TYPE = READER';
   EXECUTE IMMEDIATE SQL_STMT;
-  SQL_STMT := 'INSERT INTO &{CUST_RAW_DB}.&{CUST_RAW_SCHEMA}.reader_details 
+  SQL_STMT := 'INSERT INTO &{CUST_RAW_DB}.&{CUST_SCHEMA}.reader_details 
                (reader_account_details, cust_name, add_time_stamp) 
                SELECT PARSE_JSON($1), ''its_me'', CURRENT_TIMESTAMP() 
                FROM TABLE(result_scan(LAST_QUERY_ID()))';
   EXECUTE IMMEDIATE SQL_STMT;
   LOCATOR := (
     SELECT reader_account_details:accountLocator
-    FROM &{CUST_RAW_DB}.&{CUST_RAW_SCHEMA}.reader_details
+    FROM &{CUST_RAW_DB}.&{CUST_SCHEMA}.reader_details
      order by add_time_stamp desc LIMIT 1
   );
   SQL_STMT := 'CREATE OR REPLACE SHARE CUST_SHARE_ACTIONS';
