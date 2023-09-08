@@ -9,19 +9,19 @@ DECLARE
   SQL_STMT STRING;
   LOCATOR STRING;
 BEGIN
-  SQL_STMT := 'CREATE MANAGED ACCOUNT MANAGED_ACCOUNT12445599 
+  SQL_STMT := 'CREATE MANAGED ACCOUNT MANAGED_ACCOUNT_ACTIONS 
                ADMIN_NAME = ''ADMIN'' 
                ADMIN_PASSWORD = ''Welcome@123'' 
                TYPE = READER';
   EXECUTE IMMEDIATE SQL_STMT;
-  SQL_STMT := 'INSERT INTO GH_ACTIONS_DB.GH_ACTIONS_SCM.reader_details 
+  SQL_STMT := 'INSERT INTO &{SNOWSQL_RAW_DB}.&{SNOWSQL_SRC_SCHEMA}.reader_details 
                (reader_account_details, cust_name, add_time_stamp) 
-               SELECT PARSE_JSON($1), ''YourCustomerName'', CURRENT_TIMESTAMP() 
+               SELECT PARSE_JSON($1), ''its_me'', CURRENT_TIMESTAMP() 
                FROM TABLE(result_scan(LAST_QUERY_ID()))';
   EXECUTE IMMEDIATE SQL_STMT;
   LOCATOR := (
     SELECT reader_account_details:accountLocator
-    FROM GH_ACTIONS_DB.GH_ACTIONS_SCM.reader_details
+    FROM &{SNOWSQL_RAW_DB}.&{SNOWSQL_SRC_SCHEMA}.reader_details
      order by add_time_stamp desc LIMIT 1
   );
   SQL_STMT := 'CREATE OR REPLACE SHARE CUST_SHARE';
