@@ -38,4 +38,4 @@ BEGIN
   RETURN RESULT;
 END;
 $$;
-call reader_from_actions();
+call &{CUST_RAW_DB}.&{CUST_SCHEMA}.reader_from_actions();
