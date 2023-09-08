@@ -10,6 +10,7 @@ env:
   SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
   SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
   SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
+  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME}}
   
 
 # Controls when the workflow will run
