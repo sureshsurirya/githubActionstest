@@ -21,7 +21,7 @@ BEGIN
   
   SQL_STMT := 'INSERT INTO &{CUST_RAW_DB}.&{CUST_SCHEMA}.reader_details 
                (reader_account_details,cust_name,add_time_stamp) 
-               SELECT PARSE_JSON($1),&{CUST_NAME}, CURRENT_TIMESTAMP() 
+               SELECT PARSE_JSON($1),''' || CUST_NAME || ''', CURRENT_TIMESTAMP() 
                FROM TABLE(result_scan(LAST_QUERY_ID()))';
   EXECUTE IMMEDIATE SQL_STMT;
 
