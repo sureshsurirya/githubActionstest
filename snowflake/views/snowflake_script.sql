@@ -10,11 +10,9 @@ DECLARE
   LOCATOR STRING;
   READER_NAME STRING;
   SHARE_NAME STRING;
-  CUST_NAME VARCHAR;
 BEGIN
   READER_NAME := '&{CUST_NAME}' || '_READER';
   SHARE_NAME := '&{CUST_NAME}' || '_SHARE';
-  CUST_NAME := '&{CUST_NAME}';
 
   SQL_STMT := 'CREATE MANAGED ACCOUNT ' || READER_NAME || '
                ADMIN_NAME = ''ADMIN'' ADMIN_PASSWORD = ''Welcome@123'' TYPE = READER';
@@ -22,7 +20,7 @@ BEGIN
   
   SQL_STMT := 'INSERT INTO &{CUST_RAW_DB}.&{CUST_SCHEMA}.reader_details 
                (reader_account_details,cust_name,add_time_stamp) 
-               SELECT PARSE_JSON($1),TO_Varchar(CUST_NAME), CURRENT_TIMESTAMP() 
+               SELECT PARSE_JSON($1),${CUST_NAME}, CURRENT_TIMESTAMP() 
                FROM TABLE(result_scan(LAST_QUERY_ID()))';
   EXECUTE IMMEDIATE SQL_STMT;
 
