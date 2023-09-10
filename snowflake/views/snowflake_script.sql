@@ -42,7 +42,7 @@ BEGIN
   SQL_STMT := 'GRANT SELECT ON ALL TABLES IN SCHEMA &{CUST_RAW_DB}.&{CUST_SCHEMA} TO SHARE ' || SHARE_NAME;
   EXECUTE IMMEDIATE SQL_STMT;
 
-  SQL_STMT := 'ALTER SHARE ' || SHARE_NAME || ' ADD ACCOUNT = ''' || LOCATOR || '''';
+  SQL_STMT := 'ALTER SHARE ' || SHARE_NAME || ' ADD ACCOUNT =  || LOCATOR || ';
   EXECUTE IMMEDIATE SQL_STMT;
 
   RESULT := 'Reader Account, Share has been created, and reader account has been added to the Share';
