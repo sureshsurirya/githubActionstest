@@ -1,4 +1,4 @@
-name: edc_deployment
+name: sub_account_setup
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
@@ -19,7 +19,7 @@ on:
   workflow_dispatch:                                                
 jobs:                         
   executequery:                           
-    name: EDC Deployment Job                          
+    name: Sub account setup Job                          
     runs-on: ubuntu-latest                           
     steps:
     - name: Checkout
