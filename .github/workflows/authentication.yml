@@ -47,7 +47,7 @@ jobs:
           EMAIL = 'myemail@myorg.org'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
-EOF
+          EOF
 
       - name: Display JSON Response from File
         run: cat json_response.json
