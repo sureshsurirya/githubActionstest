@@ -41,7 +41,7 @@ jobs:
 
       - name: Execute SQL against Snowflake
         run: |
-          ~/snowflake/snowsql -a $snowsql_user -r $snowsql-role -wsnowsql-warehouse $ <<EOF
+          ~/snowflake/snowsql -a ${{ env.SNOWSQL_USER }} -r ${{ env.SNOWSQL_ROLE }} -w ${{ env.SNOWSQL_WAREHOUSE }} <<EOF
           CREATE ACCOUNT myaccount5
           ADMIN_NAME = admin
           ADMIN_PASSWORD = 'TestPassword1'
