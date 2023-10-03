@@ -40,13 +40,13 @@ jobs:
 
       - name: Create Snowflake Account and Get JSON Response
         run: |
-          json_response=$(~/snowflake/snowsql <<EOF
-          CREATE ACCOUNT myaccount7
+          json_response=$(~/snowflake/snowsql
+          'CREATE ACCOUNT myaccount7
           ADMIN_NAME = admin
           ADMIN_PASSWORD = '${{ vars.ADMIN_PASSWORD }}' # Use the admin password from the environment variable
           EMAIL = 'myemail@myorg.org'
           MUST_CHANGE_PASSWORD = FALSE
-          EDITION = enterprise; EOF)
+          EDITION = enterprise;')
           
           echo "$json_response" # Print the JSON response for debugging
           
