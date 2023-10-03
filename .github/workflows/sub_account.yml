@@ -44,5 +44,6 @@ jobs:
           ADMIN_NAME = admin
           ADMIN_PASSWORD = 'TestPassword1'
           EMAIL = 'myemail@myorg.org'
+          MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           EOF
