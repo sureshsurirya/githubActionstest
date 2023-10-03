@@ -40,8 +40,8 @@ jobs:
 
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
-          ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT myaccount11
+          ~/snowflake/snowsql --o json_response.json <<EOF
+          CREATE ACCOUNT myaccount12
           ADMIN_NAME = admin
           ADMIN_PASSWORD = '${{ vars.ADMIN_PASSWORD }}'
           EMAIL = 'myemail@myorg.org'
