@@ -1,17 +1,17 @@
 name: sub_account_setup
 
 env:
-  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
-  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
-  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
-  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
-  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
-  SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
-  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME }}
-  SNOWSQL_ADMIN_PSW: ${{ vars.ADMIN_PASSWORD }}
+  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ secrets.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ secrets.TGT_DB }}
+  SNOWSQL_SCHEMA: ${{ secrets.TGT_SCHEMA }}
+  SNOWSQL_RAW_DB: ${{ secrets.SRC_DB }}
+  SNOWSQL_SRC_SCHEMA: ${{ secrets.SRC_SCHEMA }}
+  SNOWSQL_CUSTOMER: ${{ secrets.CUST_NAME }}
+  SNOWSQL_ADMIN_PSW: ${{ secrets.ADMIN_PASSWORD }}
 
 on:
   workflow_dispatch:
@@ -43,10 +43,27 @@ jobs:
           ~/snowflake/snowsql <<EOF > json_response.json
           CREATE ACCOUNT myaccount7
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = '${{ vars.ADMIN_PASSWORD }}'
+          ADMIN_PASSWORD = '${{ secrets.ADMIN_PASSWORD }}' # Use the admin password from the secrets
           EMAIL = 'myemail@myorg.org'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
-          EOF
+EOF
+
       - name: Display JSON Response from File
         run: cat json_response.json
+
+      - name: Extract Values from JSON Response
+        run: |
+          # Extract specific values from the JSON response file using jq
+          accountLocator=$(jq -r '.accountLocator' json_response.json)
+          accountLocatorUrl=$(jq -r '.accountLocatorUrl' json_response.json)
+          accountName=$(jq -r '.accountName' json_response.json)
+          url=$(jq -r '.url' json_response.json)
+          edition=$(jq -r '.edition' json_response.json)
+
+          # Display extracted values
+          echo "accountLocator: $accountLocator"
+          echo "accountLocatorUrl: $accountLocatorUrl"
+          echo "accountName: $accountName"
+          echo "url: $url"
+          echo "edition: $edition"
