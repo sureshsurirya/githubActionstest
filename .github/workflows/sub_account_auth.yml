@@ -48,7 +48,7 @@ jobs:
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
 EOF
-          )
+)
           echo "$json_response" # Print the JSON response for debugging
 
       - name: Parse JSON Response and Extract Information
