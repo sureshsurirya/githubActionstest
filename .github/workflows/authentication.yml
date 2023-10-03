@@ -1,17 +1,17 @@
 name: sub_account_setup
 
 env:
-  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
-  SNOWSQL_WAREHOUSE: ${{ secrets.SNOWSQL_WAREHOUSE }}
-  SNOWSQL_DATABASE: ${{ secrets.TGT_DB }}
-  SNOWSQL_SCHEMA: ${{ secrets.TGT_SCHEMA }}
-  SNOWSQL_RAW_DB: ${{ secrets.SRC_DB }}
-  SNOWSQL_SRC_SCHEMA: ${{ secrets.SRC_SCHEMA }}
-  SNOWSQL_CUSTOMER: ${{ secrets.CUST_NAME }}
-  SNOWSQL_ADMIN_PSW: ${{ secrets.ADMIN_PASSWORD }}
+  SNOWSQL_ACCOUNT: ${{ env.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ env.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ env.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ env.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ env.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ env.TGT_DB }}
+  SNOWSQL_SCHEMA: ${{ env.TGT_SCHEMA }}
+  SNOWSQL_RAW_DB: ${{ env.SRC_DB }}
+  SNOWSQL_SRC_SCHEMA: ${{ env.SRC_SCHEMA }}
+  SNOWSQL_CUSTOMER: ${{ env.CUST_NAME }}
+  SNOWSQL_ADMIN_PSW: ${{ env.ADMIN_PASSWORD }}
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
           ~/snowflake/snowsql <<EOF > json_response.json
           CREATE ACCOUNT myaccount10
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = '${{ secrets.ADMIN_PASSWORD }}'
+          ADMIN_PASSWORD = '${{ env.ADMIN_PASSWORD }}'
           EMAIL = 'myemail@myorg.org'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
@@ -51,3 +51,12 @@ jobs:
 
       - name: Display JSON Response from File
         run: cat json_response.json
+
+      - name: Extract Values from JSON Response
+        run: |
+          # Display values directly from the JSON response file
+          echo "accountLocator: $(jq -r '.accountLocator' json_response.json)"
+          echo "accountLocatorUrl: $(jq -r '.accountLocatorUrl' json_response.json)"
+          echo "accountName: $(jq -r '.accountName' json_response.json)"
+          echo "url: $(jq -r '.url' json_response.json)"
+          echo "edition: $(jq -r '.edition' json_response.json)"
