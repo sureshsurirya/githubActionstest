@@ -49,6 +49,11 @@ jobs:
           EDITION = enterprise > json_response.json
           EOF
 
+      - name: Debugging Step
+        run: |
+          cat json_response.json  # Print the contents of the JSON response
+          ls -la ~/snowflake/      # List the contents of the ~/snowflake directory for debugging
+
       - name: Fetch values from JSON
         run: |
           url=$(jq -r '.url' json_response.json)
