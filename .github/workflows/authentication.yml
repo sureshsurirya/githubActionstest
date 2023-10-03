@@ -41,9 +41,9 @@ jobs:
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT myaccount8
+          CREATE ACCOUNT myaccount9
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = '${{ vars.ADMIN_PASSWORD }}' # Use the admin password from the environment variable
+          ADMIN_PASSWORD = '${{ vars.ADMIN_PASSWORD }}'
           EMAIL = 'myemail@myorg.org'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
@@ -55,11 +55,11 @@ jobs:
       - name: Extract Values from JSON Response
         run: |
           # Extract specific values from the JSON response file using jq
-          accountLocator=$(jq -r '.accountLocator' json_response.json)
-          accountLocatorUrl=$(jq -r '.accountLocatorUrl' json_response.json)
-          accountName=$(jq -r '.accountName' json_response.json)
-          url=$(jq -r '.url' json_response.json)
-          edition=$(jq -r '.edition' json_response.json)
+          accountLocator=$(jq '.accountLocator' json_response.json)
+          accountLocatorUrl=$(jq '.accountLocatorUrl' json_response.json)
+          accountName=$(jq '.accountName' json_response.json)
+          url=$(jq '.url' json_response.json)
+          edition=$(jq '.edition' json_response.json)
 
           # Display extracted values
           echo "accountLocator: $accountLocator"
