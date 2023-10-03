@@ -41,4 +41,8 @@ jobs:
 
       - name: Execute SQL against Snowflake
         run: |
-          ~/snowflake/snowsql -f /home/runner/work/githubActionstest/githubActionstest/snowflake/views/sub_account.sql;          
+          ~/snowflake/snowsql 'create account myaccount2
+                              admin_name = admin
+                              admin_password = 'TestPassword1'
+                               email = 'myemail@myorg.org'
+                                edition = enterprise;'        
