@@ -1,0 +1,62 @@
+name: sub_account_setup
+
+env:
+  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
+  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
+  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
+  SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
+  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME }}
+  SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  executequery:
+    name: Sub account setup Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download SnowSQL
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+
+      - name: Install SnowSQL
+        run: |
+          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+
+      - name: Test installation
+        run: ~/snowflake/snowsql -v
+
+      - name: Variable Substitution
+        run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
+
+      - name: Create Snowflake Account and Save JSON Response to File
+        run: |
+          ~/snowflake/snowsql <<EOF > json_response.json
+          CREATE ACCOUNT myaccount13
+          ADMIN_NAME = admin
+          ADMIN_PASSWORD = 'ChangeMe#3142ChangeMe#3142'
+          EMAIL = 'myemail@myorg.org'
+          MUST_CHANGE_PASSWORD = FALSE
+          EDITION = enterprise;
+          EOF
+
+      - name: Display JSON Response from File
+        run: cat json_response.json
+
+      - name: Authenticate with New Sub-Account
+        run: |
+          # Use the extracted account URL and the environment variable for authentication
+          admin_password="${{ vars.ADMIN_PASSWORD }}"
+          account_url=$(jq -r '.url' json_response.json)
+          ~/snowflake/snowsql -a "$account_url" -u admin -x "$admin_password" <<EOF
+          create warehouse my_wh1 with warehouse_size = 'X-SMALL' warehouse_type = 'STANDARD' auto_suspend = 60 auto_resume = true initially_suspended = true;
+          EOF
