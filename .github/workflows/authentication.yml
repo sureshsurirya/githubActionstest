@@ -38,39 +38,16 @@ jobs:
       - name: Variable Substitution
         run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
 
-      - name: Create Snowflake Account
+      - name: Create Snowflake Account and Save JSON Response to File
         run: |
-          json_response=$(
-            ~/snowflake/snowsql <<EOF
-            CREATE ACCOUNT myaccount11
-            ADMIN_NAME = admin
-            ADMIN_PASSWORD = '${{ secrets.ADMIN_PASSWORD }}'
-            EMAIL = 'myemail@myorg.org'
-            MUST_CHANGE_PASSWORD = FALSE
-            EDITION = enterprise;
-            EOF
-          )
-          
-          echo "$json_response" # Print the JSON response for debugging
-
-      - name: Save JSON Response to File
-        run: echo "$json_response" > json_response.json
+          ~/snowflake/snowsql <<EOF > json_response.json
+          CREATE ACCOUNT myaccount10
+          ADMIN_NAME = admin
+          ADMIN_PASSWORD = '${{ secrets.ADMIN_PASSWORD }}'
+          EMAIL = 'myemail@myorg.org'
+          MUST_CHANGE_PASSWORD = FALSE
+          EDITION = enterprise;
+          EOF
 
       - name: Display JSON Response from File
         run: cat json_response.json
-
-      - name: Extract Values from JSON Response
-        run: |
-          # Extract specific values from the JSON response file using jq and handle missing or non-numeric values
-          accountLocator=$(jq -r '.accountLocator' json_response.json || echo "N/A")
-          accountLocatorUrl=$(jq -r '.accountLocatorUrl' json_response.json || echo "N/A")
-          accountName=$(jq -r '.accountName' json_response.json || echo "N/A")
-          url=$(jq -r '.url' json_response.json || echo "N/A")
-          edition=$(jq -r '.edition' json_response.json || echo "N/A")
-
-          # Display extracted values
-          echo "accountLocator: $accountLocator"
-          echo "accountLocatorUrl: $accountLocatorUrl"
-          echo "accountName: $accountName"
-          echo "url: $url"
-          echo "edition: $edition"
