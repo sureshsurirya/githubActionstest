@@ -41,7 +41,7 @@ jobs:
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT myaccount17
+          CREATE ACCOUNT myaccount19
           ADMIN_NAME = admin
           ADMIN_PASSWORD = 'ChangeMe#3142ChangeMe#3142'
           EMAIL = 'myemail@myorg.org'
@@ -52,9 +52,4 @@ jobs:
       - name: Debugging Step
         run: |
           cat json_response.json  # Print the contents of the JSON response
-          ls -la ~/snowflake/      # List the contents of the ~/snowflake directory for debugging
-
-      - name: Fetch values from JSON
-        run: |
-          url=$(jq -r '.status.url' json_response.json)
-          echo "url: $url"
+          cat json_response.json
