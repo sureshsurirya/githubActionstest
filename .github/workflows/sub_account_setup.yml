@@ -10,8 +10,8 @@ env:
   SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
   SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
   SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
-  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME}}
-  SNOWSQL_ADMIN_PASSWORD: ${{vars.ADMIN_PASSWORD}}
+  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME }}
+  SNOWSQL_ADMIN_PSW: ${{ vars.ADMIN_PASSWORD }}
 
 on:
   workflow_dispatch:
@@ -40,15 +40,14 @@ jobs:
 
       - name: Create Snowflake Account and Get JSON Response
         run: |
-          json_response=$(
-            ~/snowflake/snowsql <<EOF
-            CREATE ACCOUNT myaccount6
-            ADMIN_NAME = admin
-            ADMIN_PASSWORD = '${{ env.ADMIN_PASSWORD }}' # Use the admin password from the environment variable
-            EMAIL = 'myemail@myorg.org'
-            MUST_CHANGE_PASSWORD = FALSE
-            EDITION = enterprise;
-            EOF
+          json_response=$(~/snowflake/snowsql <<EOF
+          CREATE ACCOUNT myaccount7
+          ADMIN_NAME = admin
+          ADMIN_PASSWORD = '${{ env.ADMIN_PASSWORD }}' # Use the admin password from the environment variable
+          EMAIL = 'myemail@myorg.org'
+          MUST_CHANGE_PASSWORD = FALSE
+          EDITION = enterprise;
+EOF
           )
           echo "$json_response" # Print the JSON response for debugging
 
@@ -63,4 +62,5 @@ jobs:
           # Use the extracted account URL and the environment variable for authentication
           admin_password="${{ env.ADMIN_PASSWORD }}"
           ~/snowflake/snowsql -a "$account_url" -u admin -r SYSADMIN -x "$admin_password" <<EOF
-          create or replace database sandbox_db EOF
+          create or replace database sandbox_db;
+EOF
