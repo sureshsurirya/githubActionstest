@@ -1,38 +1,50 @@
 name: sub_account_setup
 
 env:
-  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
-  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
-  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
-  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
-  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
-  SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
-  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME}}
-  
+  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ secrets.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ secrets.TGT_DB }}
+  SNOWSQL_SCHEMA: ${{ secrets.TGT_SCHEMA }}
+  SNOWSQL_RAW_DB: ${{ secrets.SRC_DB }}
+  SNOWSQL_SRC_SCHEMA: ${{ secrets.SRC_SCHEMA }}
+  SNOWSQL_CUSTOMER: ${{ secrets.CUST_NAME }}
 
 # Controls when the workflow will run
 on:
   # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:                                                
-jobs:                         
-  executequery:                           
-    name: Sub account setup Job                          
-    runs-on: ubuntu-latest                           
+  workflow_dispatch:
+
+jobs:
+  executequery:
+    name: Sub account setup Job
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Download SnowSQL
-      run:  curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
-    - name: Install SnowSQL
-      run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
-    - name: Test installation
-      run:  ~/snowflake/snowsql -v
-    - name: Variable Substitution
-      run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
-      
-    - name: Execute SQL against Snowflake
-      run:  |
-          ~/snowflake/snowsql -D CUST_RAW_DB=$SNOWSQL_RAW_DB -D CUST_SCHEMA=$SNOWSQL_SRC_SCHEMA -D CUST_NAME=$SNOWSQL_CUSTOMER -f /home/runner/work/githubActionstest/githubActionstest/snowflake/views/snowflake_script.sql;
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download SnowSQL
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+
+      - name: Install SnowSQL
+        run: |
+          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+
+      - name: Test installation
+        run: ~/snowflake/snowsql -v
+
+      - name: Variable Substitution
+        run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
+
+      - name: Execute SQL against Snowflake
+        run: |
+          ~/snowflake/snowsql <<EOF
+          CREATE ACCOUNT myaccount5
+          ADMIN_NAME = admin
+          ADMIN_PASSWORD = 'TestPassword1'
+          EMAIL = 'myemail@myorg.org'
+          EDITION = enterprise;
+          EOF
