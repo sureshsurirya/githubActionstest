@@ -40,7 +40,7 @@ jobs:
       - name: Execute SQL against Snowflake
         run: |
           ~/snowflake/snowsql <<EOF
-          CREATE ACCOUNT myaccount4
+          CREATE ACCOUNT myaccount5
           ADMIN_NAME = admin
           ADMIN_PASSWORD = 'TestPassword1'
           EMAIL = 'myemail@myorg.org'
