@@ -1,17 +1,17 @@
 name: sub_account_setup
 
 env:
-  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
-  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
-  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
-  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
-  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
-  SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
-  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME }}
-  SNOWSQL_ADMIN_PSW: ${{ vars.ADMIN_PASSWORD }}
+  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ secrets.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ secrets.TGT_DB }}
+  SNOWSQL_SCHEMA: ${{ secrets.TGT_SCHEMA }}
+  SNOWSQL_RAW_DB: ${{ secrets.SRC_DB }}
+  SNOWSQL_SRC_SCHEMA: ${{ secrets.SRC_SCHEMA }}
+  SNOWSQL_CUSTOMER: ${{ secrets.CUST_NAME }}
+  SNOWSQL_ADMIN_PSW: ${{ secrets.ADMIN_PASSWORD }}
 
 on:
   workflow_dispatch:
@@ -38,16 +38,23 @@ jobs:
       - name: Variable Substitution
         run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
 
-      - name: Create Snowflake Account and Save JSON Response to File
+      - name: Create Snowflake Account
         run: |
-          ~/snowflake/snowsql --o json_response.json <<EOF
-          CREATE ACCOUNT myaccount12
-          ADMIN_NAME = admin
-          ADMIN_PASSWORD = '${{ vars.ADMIN_PASSWORD }}'
-          EMAIL = 'myemail@myorg.org'
-          MUST_CHANGE_PASSWORD = FALSE
-          EDITION = enterprise;
-          EOF
+          json_response=$(
+            ~/snowflake/snowsql <<EOF
+            CREATE ACCOUNT myaccount11
+            ADMIN_NAME = admin
+            ADMIN_PASSWORD = '${{ secrets.ADMIN_PASSWORD }}'
+            EMAIL = 'myemail@myorg.org'
+            MUST_CHANGE_PASSWORD = FALSE
+            EDITION = enterprise;
+            EOF
+          )
+          
+          echo "$json_response" # Print the JSON response for debugging
+
+      - name: Save JSON Response to File
+        run: echo "$json_response" > json_response.json
 
       - name: Display JSON Response from File
         run: cat json_response.json
