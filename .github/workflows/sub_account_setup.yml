@@ -63,4 +63,4 @@ jobs:
           # Use the extracted account URL and the environment variable for authentication
           admin_password="${{ env.ADMIN_PASSWORD }}"
           ~/snowflake/snowsql -a "$account_url" -u admin -r SYSADMIN -x "$admin_password" <<EOF
-          create or replace database sandbox-db EOF
+          create or replace database sandbox_db EOF
