@@ -41,9 +41,4 @@ jobs:
 
       - name: Execute SQL against Snowflake
         run: |
-          ~/snowflake/snowsql 'CREATE ACCOUNT myaccount5
-          ADMIN_NAME = admin
-          ADMIN_PASSWORD = 'TestPassword1'
-          EMAIL = 'myemail@myorg.org'
-          EDITION = enterprise;'
-          
+          ~/snowflake/snowsql -f /home/runner/work/githubActionstest/githubActionstest/snowflake/views/sub_account.sql;          
