@@ -43,24 +43,26 @@ jobs:
           json_response=$(~/snowflake/snowsql <<EOF
           CREATE ACCOUNT myaccount7
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = '${{ env.ADMIN_PASSWORD }}' # Use the admin password from the environment variable
+          ADMIN_PASSWORD = '${{ vars.ADMIN_PASSWORD }}' # Use the admin password from the environment variable
           EMAIL = 'myemail@myorg.org'
           MUST_CHANGE_PASSWORD = FALSE
-          EDITION = enterprise;
-EOF
-          )
+          EDITION = enterprise; EOF)
+          
           echo "$json_response" # Print the JSON response for debugging
-
-      - name: Parse JSON Response and Extract Information
-        run: |
+          
+          # Extract specific values from JSON using jq
+          account_name=$(echo "$json_response" | jq -r '.accountName')
           account_url=$(echo "$json_response" | jq -r '.url')
+          edition=$(echo "$json_response" | jq -r '.edition')
 
+          echo "Account Name: $account_name"
           echo "Account URL: $account_url"
+          echo "Edition: $edition"
 
       - name: Authenticate with New Sub-Account
         run: |
           # Use the extracted account URL and the environment variable for authentication
-          admin_password="${{ env.ADMIN_PASSWORD }}"
+          admin_password="${{ vars.ADMIN_PASSWORD }}"
           ~/snowflake/snowsql -a "$account_url" -u admin -r SYSADMIN -x "$admin_password" <<EOF
           create or replace database sandbox_db;
 EOF
