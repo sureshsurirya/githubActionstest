@@ -1,4 +1,4 @@
-name: alter_share
+name: variable_fix
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
