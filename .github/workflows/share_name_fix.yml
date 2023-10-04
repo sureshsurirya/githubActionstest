@@ -55,8 +55,8 @@ jobs:
       - name: Create Snowflake Share and Save Share Name to File
         run: |
           ~/snowflake/snowsql <<EOF > share_name.txt
-          use role account_admin;
-          CREATE SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
+          use role accountadmin;
+          CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
           EOF
           # Extract the share name from the output and save it to a file
           grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt > captured_share_name.txt
