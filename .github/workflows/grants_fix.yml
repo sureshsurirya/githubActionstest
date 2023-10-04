@@ -58,8 +58,3 @@ jobs:
           GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$share_name";
           GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$share_name";
           EOF
-
-      - name: Debugging Step
-        run: |
-          # Print the contents of the JSON response (if needed)
-          cat json_response.json
