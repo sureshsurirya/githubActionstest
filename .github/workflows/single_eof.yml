@@ -51,13 +51,13 @@ jobs:
           EMAIL = '${{ env.SNOWSQL_CUST_EMAIL }}'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
-          USE ROLE ACCOUNTADMIN;
-          CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
-          EOF
           # Display the contents of the JSON response
           echo "JSON Response:"
           cat json_response.json
-          
+          ~/snowflake/snowsql <<EOF > sharename.txt
+          USE ROLE ACCOUNTADMIN;
+          CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
+          EOF
           # Extract the share name from the output and save it to a file
           share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
           # Display the share name for debugging
