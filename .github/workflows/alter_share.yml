@@ -62,11 +62,11 @@ jobs:
           # Display the contents of the JSON response
           cat json_response.json
           ~/snowflake/snowsql <<EOF
-          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          create or replace temporary table ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }}.sub_account_details as select * from table(result_scan(LAST_QUERY_ID(1)));
+          use role ACCOUNTADMIN;
+          create or replace temporary table ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }}.sub_account_details as select * from table(result_scan(LAST_QUERY_ID(-2)));
           grant select on table ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }}.sub_account_details to role SYSADMIN;
           ~/snowflake/snowsql <<EOF
-          use role SYSADMIN;
+          use role ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           account_locator=$(~/snowflake/snowsql -d ${{ env.SNOWSQL_CUST_DB }} -s "${{ env.SNOWSQL_CUST_SCHEMA }}" -q "SELECT parse_json($1)::string as accountLocator FROM sub_account_details;")
           EOF
