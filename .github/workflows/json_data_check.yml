@@ -44,8 +44,8 @@ jobs:
           ~/snowflake/snowsql <<EOF > json_response.json
           CREATE ACCOUNT stanford1
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = "${{ env.ADMIN_PASSWORD }}
-          EMAIL = "${{ env.CUST_EMAIl }}
+          ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}
+          EMAIL = "${{ env.SNOWSQL_CUST_EMAIl }}
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           EOF
