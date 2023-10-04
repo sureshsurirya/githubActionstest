@@ -60,6 +60,6 @@ jobs:
           EDITION = enterprise;
           USE ROLE ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          create or replace temporary table account_details as select * from table(result_scan(LAST_QUERY_ID(-3)));
-          grant select on table sub_account_details to role SYSADMIN;
+          create or replace table sub_account_details_list as select * from table(result_scan(LAST_QUERY_ID(-3)));
+          grant select on table sub_account_details_list to role SYSADMIN;
           EOF
