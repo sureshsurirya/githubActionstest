@@ -41,8 +41,8 @@ jobs:
       - name: Variable Substitution
         run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
 
-      - name: Commented Out: Create Snowflake Account and Save JSON Response to File
-        run: |
+     # - name: Commented Out: Create Snowflake Account and Save JSON Response to File
+      #  run: |
           # Commented out: Create Snowflake Account
           # ~/snowflake/snowsql <<EOF > json_response.json
           # CREATE ACCOUNT ${{ env.SNOWSQL_CUST_NAME }}
