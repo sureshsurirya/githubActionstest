@@ -52,8 +52,7 @@ jobs:
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           # Display the contents of the JSON response
-          echo "JSON Response:"
-          cat json_response.json
+          echo "JSON Response:$json_response.json"
           ~/snowflake/snowsql <<EOF > sharename.txt
           USE ROLE ACCOUNTADMIN;
           CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
