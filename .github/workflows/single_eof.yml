@@ -36,7 +36,8 @@ jobs:
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
 
       - name: Test installation
-        run: ~/snowflake/snowsql -v
+        run: |
+          ~/snowflake/snowsql -v
         
       - name: Variable Substitution
         run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
@@ -53,8 +54,13 @@ jobs:
           USE ROLE ACCOUNTADMIN;
           CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
           EOF
+          # Display the contents of the JSON response
+          echo "JSON Response:"
+          cat json_response.json
+          
           # Extract the share name from the output and save it to a file
           share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
           # Display the share name for debugging
           echo "Share Name: $share_name"
-          cat json_response.json  # Print the contents of the JSON response
+          # Display the share name again
+          echo "Share Name: $share_name"
