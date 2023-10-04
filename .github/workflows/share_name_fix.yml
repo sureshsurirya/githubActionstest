@@ -44,10 +44,10 @@ jobs:
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT ${{ vars.SNOWSQL_CUST_NAME }}
+          CREATE ACCOUNT ${{ env.SNOWSQL_CUST_NAME }}
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = "${{ vars.SNOWSQL_ADMIN_PASSWORD }}"
-          EMAIL = '${{ vars.SNOWSQL_CUST_EMAIL }}'
+          ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
+          EMAIL = '${{ env.SNOWSQL_CUST_EMAIL }}'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           EOF
@@ -55,6 +55,7 @@ jobs:
       - name: Create Snowflake Share and Save Share Name to File
         run: |
           ~/snowflake/snowsql <<EOF > share_name.txt
+          use account_admin role;
           CREATE SHARE "${{ vars.SNOWSQL_CUST_NAME }}_share";
           EOF
           # Extract the share name from the output and save it to a file
