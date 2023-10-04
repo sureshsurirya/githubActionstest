@@ -59,10 +59,10 @@ jobs:
           CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
           EOF
           # Extract the share name from the output and save it to a file
-          grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt > captured_share_name.txt
+          share_name = $(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
           # Display the share name for debugging
-          cat captured_share_name.txt
-          echo "::set-env name=SHARE_NAME::$(cat captured_share_name.txt)"  # Set it as an environment variable for later use
+          echo "Share Name: $share_name"
+          
 
       - name: Debugging Step
         run: |
