@@ -10,7 +10,7 @@ env:
   SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
   SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
   SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
-  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME }}
+  SNOWSQL_CUST_NAME: ${{ vars.CUST_NAME }}
   SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
   SNOWSQL_CUST_EMAIL: ${{ vars.CUST_EMAIL }}
 
@@ -42,7 +42,7 @@ jobs:
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT stanford2
+          CREATE ACCOUNT "${{ env.SNOWSQL_CUST_NAME }}"
           ADMIN_NAME = admin
           ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
           EMAIL = "${{ env.SNOWSQL_CUST_EMAIL }}"
