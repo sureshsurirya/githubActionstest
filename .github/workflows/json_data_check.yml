@@ -40,16 +40,17 @@ jobs:
 
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
+          account_name="${{ vars.CUST_NAME }}"  # Ensure that account_name follows naming conventions
+          admin_password="${{ vars.ADMIN_PASSWORD }}"
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT "${{ vars.cust_name }}"
+          CREATE ACCOUNT $account_name
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = "${{ vars.ADMIN_PASSWORD }}"
+          ADMIN_PASSWORD = '$admin_password'
           EMAIL = 'myemail@myorg.org'
           MUST_CHANGE_PASSWORD = FALSE
-          EDITION = enterprise
+          EDITION = enterprise;
           EOF
 
       - name: Debugging Step
         run: |
           cat json_response.json  # Print the contents of the JSON response
-          cat json_response.json
