@@ -95,7 +95,7 @@ jobs:
       - name: Extract accountLocator from Snowflake Output File using a different pattern
         run: |
           # Extract the accountLocator value from the snowflake_output2.txt file using a different pattern
-          accountLocator=$(grep -oP 'accountLocator:\s*\K\S+' snowflake_output2.txt)
+          accountLocator=$(grep -oP 'accountLocator' snowflake_output2.txt)
           echo "accountLocator: $accountLocator"
 
 
