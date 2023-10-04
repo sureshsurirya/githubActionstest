@@ -40,8 +40,8 @@ jobs:
 
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
-          account_name="${{ vars.CUST_NAME }}"  # Ensure that account_name follows naming conventions
-          admin_password="${{ vars.ADMIN_PASSWORD }}"
+          account_name="${{ env.CUST_NAME }}"  # Ensure that account_name follows naming conventions
+          admin_password="${{ env.ADMIN_PASSWORD }}"
           ~/snowflake/snowsql <<EOF > json_response.json
           CREATE ACCOUNT $account_name
           ADMIN_NAME = admin
