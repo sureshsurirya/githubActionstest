@@ -37,11 +37,13 @@ jobs:
 
       - name: Test installation
         run: ~/snowflake/snowsql -v
+        
+      - name: Variable Substitution
+        run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
 
       - name: Setup SnowSQL and Create Snowflake Account
         run: |
           ~/snowflake/snowsql <<EOF > json_response.json
-          variable_substitution=true
           CREATE ACCOUNT ${{ env.SNOWSQL_CUST_NAME }}
           ADMIN_NAME = admin
           ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
