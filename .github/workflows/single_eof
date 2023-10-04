@@ -1,0 +1,61 @@
+name: sub_account_setup
+
+env:
+  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
+  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
+  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
+  SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
+  SNOWSQL_CUST_NAME: ${{ vars.CUST_NAME }}
+  SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
+  SNOWSQL_CUST_EMAIL: ${{ vars.CUST_EMAIL }}
+  SNOWSQL_CUST_DB: ${{ vars.CUST_DB }}
+  SNOWSQL_CUST_SCHEMA: ${{ vars.CUST_SCHEMA }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  executequery:
+    name: Sub account setup Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download SnowSQL
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+
+      - name: Install SnowSQL
+        run: |
+          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+
+      - name: Test installation
+        run: ~/snowflake/snowsql -v
+
+      - name: Variable Substitution
+        run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
+
+      - name: Create Snowflake Share and Export Share Name
+        run: |
+          ~/snowflake/snowsql <<EOF > share_name.txt
+          USE ROLE ACCOUNTADMIN;
+          CREATE OR REPLACE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
+          EOF
+          share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
+          echo "export SHARE_NAME=$share_name" >> $GITHUB_ENV
+          echo "Share Name: $SHARE_NAME"
+          USE ROLE SYSADMIN;
+          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
+          GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "$SHARE_NAME";
+          GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$SHARE_NAME";
+          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$SHARE_NAME";
+          EOF
+
+      - name: Debugging Step
+        run: cat json_response.json
