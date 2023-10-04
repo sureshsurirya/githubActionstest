@@ -66,10 +66,6 @@ jobs:
           ~/snowflake/snowsql <<EOF
           USE ROLE ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          select PARSE_JSON("status"):url::string as url from sub_account_details_list;
-          EOF
-          >  snowsql_output.txt
-          URL=$(tail -n 1 snowsql_output.txt)  # Assumes the URL is in the last line of the file
-          echo "URL: $URL"
-    
-          
+          link = "$(select PARSE_JSON("status"):url::string as url from sub_account_details_list)";
+          EOF    
+          echo $link
