@@ -1,4 +1,4 @@
-name: single_eof
+name: single-eof
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
@@ -36,31 +36,23 @@ jobs:
           SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
 
       - name: Test installation
-        run: |
-          ~/snowflake/snowsql -v
-          echo "variable_substitution=true" | tee -a ~/.snowsql/config
+        run: ~/snowflake/snowsql -v
 
-      - name: Create Snowflake Account and Save JSON Response to File
+      - name: Setup SnowSQL and Create Snowflake Account
         run: |
           ~/snowflake/snowsql <<EOF > json_response.json
+          variable_substitution=true
           CREATE ACCOUNT ${{ env.SNOWSQL_CUST_NAME }}
           ADMIN_NAME = admin
           ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
           EMAIL = '${{ env.SNOWSQL_CUST_EMAIL }}'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
-          EOF
-          echo "Snowflake Account Created"
-          ~/snowflake/snowsql <<EOF
           USE ROLE ACCOUNTADMIN;
-          CREATE OR REPLACE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
+          CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
           EOF
-          ~/snowflake/snowsql <<EOF
-          USE ROLE SYSADMIN;
-          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "$SHARE_NAME";
-          GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$SHARE_NAME";
-          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$SHARE_NAME";
-          EOF
-      - name: Debugging Step
-        run: cat json_response.json
+          # Extract the share name from the output and save it to a file
+          share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
+          # Display the share name for debugging
+          echo "Share Name: $share_name"
+          cat json_response.json  # Print the contents of the JSON response
