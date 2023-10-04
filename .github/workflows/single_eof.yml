@@ -64,6 +64,7 @@ jobs:
           echo "Share Name: $share_name"
           
           ~/snowflake/snowsql <<EOF 
+          use role ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "$share_name";
           GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$share_name";
