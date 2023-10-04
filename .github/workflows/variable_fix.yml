@@ -63,11 +63,7 @@ jobs:
           create or replace table sub_account_details_list as select * from table(result_scan(LAST_QUERY_ID(-3)));
           grant select on table sub_account_details_list to role SYSADMIN;
           EOF
-          link=$(~/snowflake/snowsql <<EOF
-          USE ROLE ACCOUNTADMIN;
-          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          select PARSE_JSON("status"):url::string as url from sub_account_details_list;
-          EOF
-          )
-          # Display the URL
+      - name: Query Snowflake for URL
+        run: |
+          link=$(/root/snowflake/snowsql -o friendly=false -o output_format=csv -q "USE ROLE ACCOUNTADMIN; USE DATABASE ${{ env.SNOWSQL_CUST_DB }}; SELECT PARSE_JSON(\"status\"):url::string as url FROM sub_account_details_list;")
           echo "link: $link"
