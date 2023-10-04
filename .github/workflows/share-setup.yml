@@ -13,6 +13,8 @@ env:
   SNOWSQL_CUST_NAME: ${{ vars.CUST_NAME }}
   SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
   SNOWSQL_CUST_EMAIL: ${{ vars.CUST_EMAIL }}
+  SNOWSQL_CUST_DB: ${{ vars.CUST_DB }}
+  SNOWSQL_CUST_SCHEMA: ${{ vars.CUST_SCHEMA }}
 
 on:
   workflow_dispatch:
