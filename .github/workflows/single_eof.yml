@@ -44,10 +44,10 @@ jobs:
       - name: Setup SnowSQL and Create Snowflake Account
         run: |
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT ${{ vars.SNOWSQL_CUST_NAME }}
+          CREATE ACCOUNT ${{ env.SNOWSQL_CUST_NAME }}
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = "${{ vars.SNOWSQL_ADMIN_PASSWORD }}"
-          EMAIL = '${{ vars.SNOWSQL_CUST_EMAIL }}'
+          ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
+          EMAIL = '${{ env.SNOWSQL_CUST_EMAIL }}'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           EOF
@@ -57,7 +57,7 @@ jobs:
           
           ~/snowflake/snowsql <<EOF > share_name.txt
           USE ROLE ACCOUNTADMIN;
-          CREATE SHARE ${{ vars.SNOWSQL_CUST_NAME }}_SHARE;
+          CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
           EOF
           # Extract the share name from the output and save it to a file
           share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
