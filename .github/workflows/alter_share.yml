@@ -66,6 +66,6 @@ jobs:
           ~/snowflake/snowsql <<EOF
           USE ROLE ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          link = "$(select PARSE_JSON("status"):url::string as url from sub_account_details_list)";
+          link = "${select PARSE_JSON("status"):url::string as url from sub_account_details_list}";
           EOF    
           echo $link
