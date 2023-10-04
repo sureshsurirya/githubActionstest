@@ -77,18 +77,6 @@ jobs:
         run: |
           # Extract the URL value from the snowflake_output.txt file
           url=$(grep -oP 'https://\S+' snowflake_output.txt)
-          echo "URL: $url"
-
-          # Now you can use the $url variable in subsequent steps
-        env:
-          SNOWFLAKE_URL: $url
-
-      - name: Extract accountLocator from Snowflake Output File
-        run: |
-          # Extract the accountLocator value from the snowflake_output.txt file
           accountLocator=$(grep -oP 'accountLocator:\s*\K\S+' snowflake_output.txt)
+          echo "URL: $url"
           echo "accountLocator: $accountLocator"
-
-          # Now you can use the $accountLocator variable in subsequent steps
-        env:
-          ACCOUNT_LOCATOR: $accountLocator
