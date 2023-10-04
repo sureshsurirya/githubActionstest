@@ -1,4 +1,4 @@
-name: variable-fix
+name: alter_share
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
@@ -73,19 +73,22 @@ jobs:
           SELECT PARSE_JSON("status"):url::string as url FROM sub_account_details_list;
           EOF
 
-      - name: Display Snowflake Output File
-        run: |
-          # Display the contents of the snowflake_output.txt file
-          cat snowflake_output.txt
-
       - name: Extract URL Value from Snowflake Output File
         run: |
           # Extract the URL value from the snowflake_output.txt file
           url=$(grep -oP 'https://\S+' snowflake_output.txt)
           echo "URL: $url"
+          
+      - name: Execute Snowflake SQL Command and Save Output to File
+        run: |
+          ~/snowflake/snowsql <<EOF > snowflake_output.txt
+          USE ROLE ACCOUNTADMIN;
+          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
+          SELECT PARSE_JSON("status"):accountLocator::string as accountLocator FROM sub_account_details_list;
+          EOF
 
       - name: Extract accountLocator from Snowflake Output File
         run: |
-          # Extract the accountLocator value using awk
-          accountLocator=$(awk '/accountLocator:/ {print $2}' snowflake_output.txt)
+          # Extract the accountLocator value from the snowflake_output.txt file
+          accountLocator=$(grep -oP 'accountLocator:\s*\K\S+' snowflake_output.txt)
           echo "accountLocator: $accountLocator"
