@@ -41,9 +41,9 @@ jobs:
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT myaccount22
+          CREATE ACCOUNT = "${{ vars.cust_name }}"
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = 'ChangeMe#3142ChangeMe#3142'
+          ADMIN_PASSWORD = "${{ secrets.ADMIN_PASSWORD }}"
           EMAIL = 'myemail@myorg.org'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise
@@ -53,4 +53,3 @@ jobs:
         run: |
           cat json_response.json  # Print the contents of the JSON response
           cat json_response.json
-          jq '.[].url' json_response.json
