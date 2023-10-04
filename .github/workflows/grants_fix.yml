@@ -1,4 +1,4 @@
-name: sub_account_setup
+name: grants_fix
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
