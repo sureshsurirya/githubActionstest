@@ -92,9 +92,10 @@ jobs:
           # Display the contents of the snowflake_output2.txt file
           cat snowflake_output2.txt
           
-      - name: Extract accountLocator from Snowflake Output File
+      - name: Extract accountLocator from Snowflake Output File using a different pattern
         run: |
-           # Extract the accountLocator value from the snowflake_output2.txt file using a different pattern
-            accountLocator=$(grep -oP 'accountLocator:\s*(\S+)' snowflake_output2.txt | awk '{print $2}')
-            echo "accountLocator: $accountLocator"
+          # Extract the accountLocator value from the snowflake_output2.txt file using a different pattern
+          accountLocator=$(grep -oP 'accountLocator:\s*\K\S+' snowflake_output2.txt)
+          echo "accountLocator: $accountLocator"
+
 
