@@ -62,6 +62,8 @@ jobs:
           share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
           # Display the share name for debugging
           echo "Share Name: $share_name"
+          
+          ~/snowflake/snowsql <<EOF 
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "$share_name";
           GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$share_name";
