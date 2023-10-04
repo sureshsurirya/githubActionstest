@@ -53,7 +53,6 @@ jobs:
           echo "Share Name: $share_name"
           # Grant Permissions to Share using the exported SHARE_NAME
           ~/snowflake/snowsql <<EOF
-          USE ROLE SYSADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "$share_name";
           GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$share_name";
