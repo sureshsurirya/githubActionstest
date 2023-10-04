@@ -52,22 +52,14 @@ jobs:
           EDITION = enterprise;
           EOF
           # Display the contents of the JSON response
-          echo "JSON Response:"
           cat json_response.json
           
           ~/snowflake/snowsql <<EOF > share_name.txt
           USE ROLE ACCOUNTADMIN;
           CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
-          # Extract the share name from the output and save it to a file
-          share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
-          # Display the share name for debugging
-          echo "Share Name: $share_name"
           
-          ~/snowflake/snowsql <<EOF 
-          use role ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "$share_name";
-          GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$share_name";
-          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$share_name";
+          GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "$SNOWSQL_CUST_NAME_SHARE";
+          GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$SNOWSQL_CUST_NAME_SHARE";
+          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$SNOWSQL_CUST_NAME_SHARE";
           EOF
-          
