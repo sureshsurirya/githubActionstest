@@ -62,8 +62,9 @@ jobs:
           # Display the contents of the JSON response
           cat json_response.json
           ~/snowflake/snowsql <<EOF
-          create or replace temporary table sub_account_details as select * from table(result_scan(LAST_QUERY_ID()));
-          grant select on table sub_account_details to role SYSADMIN;
+          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
+          create or replace temporary table ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }}.sub_account_details as select * from table(result_scan(LAST_QUERY_ID(1)));
+          grant select on table ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }}.sub_account_details to role SYSADMIN;
           ~/snowflake/snowsql <<EOF
           use role SYSADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
