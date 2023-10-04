@@ -45,17 +45,17 @@ jobs:
         run: |
           ~/snowflake/snowsql <<EOF
           USE ROLE ACCOUNTADMIN;
-          CREATE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
-          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
-          GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
-          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
+          CREATE SHARE ${{ vars.SNOWSQL_CUST_NAME }}_SHARE;
+          USE DATABASE ${{ vars.SNOWSQL_CUST_DB }};
+          GRANT USAGE ON DATABASE ${{ vars.SNOWSQL_CUST_DB }} TO SHARE "${{ vars.SNOWSQL_CUST_NAME }}_SHARE";
+          GRANT USAGE ON SCHEMA ${{ vars.SNOWSQL_CUST_SCHEMA }} TO SHARE "${{ vars.SNOWSQL_CUST_NAME }}_SHARE";
+          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ vars.SNOWSQL_CUST_DB }}.${{ vars.SNOWSQL_CUST_SCHEMA }} TO SHARE "${{ vars.SNOWSQL_CUST_NAME }}_SHARE";
           EOF
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT ${{ env.SNOWSQL_CUST_NAME }}
+          CREATE ACCOUNT ${{ vars.SNOWSQL_CUST_NAME }}
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
-          EMAIL = '${{ env.SNOWSQL_CUST_EMAIL }}'
+          ADMIN_PASSWORD = "${{ vars.SNOWSQL_ADMIN_PASSWORD }}"
+          EMAIL = '${{ vars.SNOWSQL_CUST_EMAIL }}'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           EOF
@@ -63,6 +63,6 @@ jobs:
           cat json_response.json
           ~/snowflake/snowsql <<EOF
           use role sysadmin
-          use database ${{ env.SNOWSQL_CUST_DB }};
+          use database ${{ vars.SNOWSQL_CUST_DB }};
           create or replace temporary table sub_account_details as select * from table(result_scan(LAST_QUERY_ID()));
           EOF
