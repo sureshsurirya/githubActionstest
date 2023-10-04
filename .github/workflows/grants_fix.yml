@@ -41,28 +41,31 @@ jobs:
       - name: Variable Substitution
         run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
 
-      - name: Create Snowflake Share and Save Share Name to File
+      - name: Create Snowflake Share and Export Share Name
         run: |
           ~/snowflake/snowsql <<EOF > share_name.txt
           USE ROLE ACCOUNTADMIN;
           CREATE OR REPLACE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
           EOF
+          # Extract the share name from the output
+          share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
+          # Export the share_name as an environment variable
+          echo "export SHARE_NAME=$share_name" >> $GITHUB_ENV
 
       - name: Display Share Name
         run: |
-          # Extract the share name from the output
-          share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
-          echo "Share Name: $share_name"
+          # Display the Share Name
+          echo "Share Name: $SHARE_NAME"
 
       - name: Grant Permissions to Share
         run: |
-          # Grant Permissions to Share
+          # Grant Permissions to Share using the exported SHARE_NAME
           ~/snowflake/snowsql <<EOF
           USE ROLE SYSADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE $share_name;
-          GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE $share_name;
-          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE $share_name;
+          GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "$SHARE_NAME";
+          GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$SHARE_NAME";
+          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "$SHARE_NAME";
           EOF
 
       - name: Debugging Step
