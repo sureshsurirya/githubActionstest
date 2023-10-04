@@ -1,4 +1,4 @@
-name: variable_fix
+name: alter_share
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
@@ -51,6 +51,7 @@ jobs:
           GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
           GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
           EOF
+
           ~/snowflake/snowsql <<EOF
           CREATE ACCOUNT ${{ env.SNOWSQL_CUST_NAME }}
           ADMIN_NAME = admin
@@ -63,7 +64,21 @@ jobs:
           create or replace table sub_account_details_list as select * from table(result_scan(LAST_QUERY_ID(-3)));
           grant select on table sub_account_details_list to role SYSADMIN;
           EOF
-      - name: Query Snowflake for URL
+
+      - name: Execute Snowflake SQL Command and Save Output to File
         run: |
-          link=$(/root/snowflake/snowsql -o friendly=false -o output_format=csv -q "USE ROLE ACCOUNTADMIN; USE DATABASE ${{ env.SNOWSQL_CUST_DB }}; SELECT PARSE_JSON(\"status\"):url::string as url FROM sub_account_details_list;")
-          echo "link: $link"
+          ~/snowflake/snowsql <<EOF > snowflake_output.txt
+          USE ROLE ACCOUNTADMIN;
+          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
+          SELECT PARSE_JSON("status"):url::string as url FROM sub_account_details_list;
+          EOF
+
+      - name: Extract URL Value from Snowflake Output File
+        run: |
+          # Extract the URL value from the snowflake_output.txt file
+          url=$(grep -oP 'https://\S+' snowflake_output.txt)
+          echo "URL: $url"
+
+          # Now you can use the $url variable in subsequent steps
+        env:
+          SNOWFLAKE_URL: $url
