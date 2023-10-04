@@ -12,6 +12,7 @@ env:
   SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
   SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME }}
   SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
+  SNOWSQL_CUST_EMAIL: ${{ vars.CUST_EMAIL }}
 
 on:
   workflow_dispatch:
