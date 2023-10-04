@@ -65,8 +65,8 @@ jobs:
           USE ROLE ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           create or replace temporary table sub_account_details as select * from table(result_scan(LAST_QUERY_ID()));
-          EOF
-          # Run the SnowSQL query to fetch accountLocator and store it in a local variable
           account_locator=$(~/snowflake/snowsql -d ${{ env.SNOWSQL_CUST_DB }} -s "${{ env.SNOWSQL_CUST_SCHEMA }}" -q "SELECT parse_json($1)::string as accountLocator FROM sub_account_details;")
+          EOF
           echo "Account Locator: $account_locator"
+ 
 
