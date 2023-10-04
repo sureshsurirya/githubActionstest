@@ -52,8 +52,8 @@ jobs:
           EDITION = enterprise;
           EOF
           # Display the contents of the JSON response
-          echo "JSON Response:"
-          cat json_response.json
+          #echo "JSON Response:"
+          #cat json_response.json
           
           ~/snowflake/snowsql <<EOF > share_name.txt
           USE ROLE ACCOUNTADMIN;
@@ -62,6 +62,4 @@ jobs:
           # Extract the share name from the output and save it to a file
           share_name=$(grep -oP 'Share \K\w+(?=\s+successfully created)' share_name.txt)
           # Display the share name for debugging
-          echo "Share Name: $share_name"
-          # Display the share name again
           echo "Share Name: $share_name"
