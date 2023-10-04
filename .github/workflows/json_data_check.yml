@@ -41,13 +41,11 @@ jobs:
 
       - name: Create Snowflake Account and Save JSON Response to File
         run: |
-          admin_password="${SNOWSQL_ADMIN_PASSWORD}"
-          cust_name="${SNOWSQL_CUSTOMER}"
           ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT "${cust_name}"
+          CREATE ACCOUNT stanford1
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = '${admin_password}'
-          EMAIL = 'myemail@myorg.org'
+          ADMIN_PASSWORD = "${{ env.ADMIN_PASSWORD }}
+          EMAIL = "${{ env.CUST_EMAIl }}
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           EOF
