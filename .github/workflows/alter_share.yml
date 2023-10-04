@@ -62,5 +62,9 @@ jobs:
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           create or replace table sub_account_details_list as select * from table(result_scan(LAST_QUERY_ID(-3)));
           grant select on table sub_account_details_list to role SYSADMIN;
+          EOF
+          ~/snowflake/snowsql <<EOF
+          USE ROLE ACCOUNTADMIN;
+          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           select PARSE_JSON($1):url::string as url from sub_account_details_list;
           EOF
