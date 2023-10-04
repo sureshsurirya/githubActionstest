@@ -58,20 +58,12 @@ jobs:
           EMAIL = '${{ env.SNOWSQL_CUST_EMAIL }}'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
-          EOF
-          # Display the contents of the JSON response
-          cat json_response.json
-          ~/snowflake/snowsql <<EOF
           USE ROLE ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           create or replace temporary table sub_account_details as select * from table(result_scan(LAST_QUERY_ID(-3)));
           grant select on table sub_account_details to role SYSADMIN;
           EOF
-          ~/snowflake/snowsql <<EOF
-          use role ACCOUNTADMIN;
-          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          account_locator=$(~/snowflake/snowsql -q "SELECT parse_json($1)::string as accountLocator FROM sub_account_details;")
-          EOF
-          echo "Account Locator: $account_locator"
+          # Display the contents of the JSON response
+          cat json_response.json
  
 
