@@ -70,7 +70,6 @@ jobs:
           echo "Locator: $Locator"
           ~/snowflake/snowsql << EOF
            USE ROLE ACCOUNTADMIN;
-           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
            ALTER SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE" ADD ACCOUNTS = $Locator;
            EOF
           
