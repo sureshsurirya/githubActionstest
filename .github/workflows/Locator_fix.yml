@@ -63,4 +63,4 @@ jobs:
           cat account_details.txt | wc -l
           head -n 6 account_details.txt | tail -n 1 > url.json
           cat url.json
-          accountLocator=$(jq '."accountLocator"' url.json)
+          accountLocator=`jq '.accountLocator' url.json`
