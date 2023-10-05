@@ -88,6 +88,6 @@ jobs:
           EOF
       - name: extract Locator
         run: |
-            accountLocator=$(awk -F '|' '/ACCOUNTLOCATOR/ {gsub(/[[:space:]]*/, "", $2); print $2}' snowflake_output2.txt)
-            echo "ACCOUNTLOCATOR: $accountLocator"  
+            accountLocator=$(tail -n +2 snowflake_output2.txt | awk -F '|' '{gsub(/[[:space:]]*/, "", $2); print $2}')
+            echo "ACCOUNTLOCATOR: $accountLocator" 
                                                                                               
