@@ -1,4 +1,4 @@
-name: sub_account_setup
+name: Authentication
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
@@ -10,8 +10,11 @@ env:
   SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
   SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
   SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
-  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME }}
+  SNOWSQL_CUST_NAME: ${{ vars.CUST_NAME }}
   SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
+  SNOWSQL_CUST_EMAIL: ${{ vars.CUST_EMAIL }}
+  SNOWSQL_CUST_DB: ${{ vars.CUST_DB }}
+  SNOWSQL_CUST_SCHEMA: ${{ vars.CUST_SCHEMA }}
 
 on:
   workflow_dispatch:
@@ -22,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Download SnowSQL
         run: |
@@ -38,25 +41,34 @@ jobs:
       - name: Variable Substitution
         run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
 
-      - name: Create Snowflake Account and Save JSON Response to File
+      - name: Setup SnowSQL and Create Snowflake Account
         run: |
-          ~/snowflake/snowsql <<EOF > json_response.json
-          CREATE ACCOUNT myaccount13
+          ~/snowflake/snowsql <<EOF
+          USE ROLE ACCOUNTADMIN;
+          CREATE OR REPLACE SHARE ${{ env.SNOWSQL_CUST_NAME }}_SHARE;
+          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
+          GRANT USAGE ON DATABASE ${{ env.SNOWSQL_CUST_DB }} TO SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
+          GRANT USAGE ON SCHEMA ${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
+          GRANT SELECT ON ALL TABLES IN SCHEMA ${{ env.SNOWSQL_CUST_DB }}.${{ env.SNOWSQL_CUST_SCHEMA }} TO SHARE "${{ env.SNOWSQL_CUST_NAME }}_SHARE";
+          EOF
+
+          ~/snowflake/snowsql <<EOF > account_details.txt
+          CREATE ACCOUNT ${{ env.SNOWSQL_CUST_NAME }}
           ADMIN_NAME = admin
-          ADMIN_PASSWORD = 'ChangeMe#3142ChangeMe#3142'
-          EMAIL = 'myemail@myorg.org'
+          ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
+          EMAIL = '${{ env.SNOWSQL_CUST_EMAIL }}'
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           EOF
-
-      - name: Display JSON Response from File
-        run: cat json_response.json
-
-      - name: Extract Values from JSON Response
-        run: |
-          # Display values directly from the JSON response file
-          echo "accountLocator: $(jq -r '.accountLocator' json_response.json)"
-          echo "accountLocatorUrl: $(jq -r '.accountLocatorUrl' json_response.json)"
-          echo "accountName: $(jq -r '.accountName' json_response.json)"
-          echo "url: $(jq -r '.url' json_response.json)"
-          echo "edition: $(jq -r '.edition' json_response.json)"
+          cat account_details.txt | wc -l
+          head -n 6 account_details.txt | tail -n 1 > url.json
+          cat url.json
+          # Remove leading and trailing "|" from the file
+          sed -i 's/^ *| *//; s/ *| *$//' url.json
+          Locator=`jq -r '.accountLocator' url.json`
+          echo ""
+          echo "Locator: $Locator"
+          accountLocatorUrl=`jq -r '.accountLocatorUrl' url.json`
+          echo ""
+          echo "accountLocatorUrl: $accountLocatorUrl"
+          ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_SHARE\" ADD ACCOUNTS = $Locator;"
