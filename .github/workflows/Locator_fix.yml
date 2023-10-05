@@ -60,7 +60,7 @@ jobs:
           MUST_CHANGE_PASSWORD = FALSE
           EDITION = enterprise;
           EOF
-          cat account_details.txt
+          cat account_details.txt | wc -l
       - name: Execute Snowflake SQL Command and Save Output to File
         run: |
           ~/snowflake/snowsql <<EOF > snowflake_output.txt
