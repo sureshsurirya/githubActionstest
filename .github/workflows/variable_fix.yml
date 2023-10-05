@@ -84,17 +84,18 @@ jobs:
           ~/snowflake/snowsql <<EOF > snowflake_output2.txt
           USE ROLE ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          SELECT PARSE_JSON("status"):accountLocator::varchar as accountLocator FROM sub_account_details_list;
+          SELECT PARSE_JSON("status"):accountLocator::string as accountLocator FROM sub_account_details_list;
           EOF
 
       - name: Display Snowflake Output2 File
         run: |
           # Display the contents of the snowflake_output2.txt file
           cat snowflake_output2.txt
-          
-      - name: Extract accountLocator from Snowflake Output File
+      - name: Extract URL Value from Snowflake Output File
         run: |
-          #  Search for the line containing "accountLocator" and extract its value
-          accountLocator=$(grep 'accountLocator' snowflake_output2.txt | awk -F ': ' '{print $2}')
-          echo "accountLocator: $accountLocator"
-
+          # Extract the URL value from the snowflake_output2.txt file
+          Locator=$(grep -oP '"accountLocator"\s*:\s*"\K[^"]+' snowflake_output2.txt)
+          echo "Locator: $Locator"
+     
+  
+                                                                                              
