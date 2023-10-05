@@ -94,8 +94,8 @@ jobs:
       - name: Extract URL Value from Snowflake Output File
         run: |
           # Extract the URL value from the snowflake_output2.txt file
-          Locator=$(grep -oP '"accountLocator"\s*:\s*"\K[^"]+' snowflake_output2.txt)
-          echo "Locator: $Locator"
+          accountLocator=$(grep -oP 'ACCOUNTLOCATOR\s*\|\s*\K\S+' snowflake_output2.txt)
+          echo "ACCOUNTLOCATOR: $accountLocator"
      
   
                                                                                               
