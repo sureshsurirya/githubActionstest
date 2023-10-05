@@ -72,6 +72,7 @@ jobs:
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           SELECT PARSE_JSON("status"):url::string as url FROM sub_account_details_list;
           EOF
+          cat snowflake_output.txt
 
       - name: Extract URL Value from Snowflake Output File
         run: |
@@ -89,6 +90,6 @@ jobs:
           cat snowflake_output2.txt
       - name: extract Locator
         run: |
-            accountLocator=$(awk -F '|' 'NR == 2 {gsub(/[[:space:]]*/, "", $2); print $2}' snowflake_output2.txt)
-            echo "accountLocator: $accountLocator"
+             accountLocator=$(grep -oP 'accountLocator://\S+' snowflake_output2.txt)
+              echo "accountLocator: $accountLocator"
                                                                                               
