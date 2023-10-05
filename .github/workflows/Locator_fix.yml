@@ -68,5 +68,5 @@ jobs:
           Locator=`jq -r '.accountLocator' url.json`
           echo ""
           echo "Locator: $Locator"
-          ~/snowflake/snowsql -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_SHARE\" ADD ACCOUNTS = '$Locator';"
+          ~/snowflake/snowsql -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_SHARE\" ADD ACCOUNTS = $Locator;"
           
