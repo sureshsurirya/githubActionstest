@@ -65,7 +65,8 @@ jobs:
           cat url.json
           # Remove leading and trailing "|" from the file
           sed -i 's/^ *| *//; s/ *| *$//' url.json
-          echo -n "url.json"  tail -c +2 | head -c -2
+          echo -n "url.json"  tail -c +2 | head -c -2 >creds.jsn
+          cat creds.json
           Locator=`jq '.accountLocator' url.json`
           echo ""
           echo "Locator: $Locator"
