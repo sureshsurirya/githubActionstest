@@ -1,4 +1,4 @@
-name: variable_fix
+name: Locator_fix
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
