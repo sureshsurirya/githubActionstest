@@ -89,6 +89,6 @@ jobs:
           cat snowflake_output2.txt
       - name: extract Locator
         run: |
-            accountLocator=$(awk -F '|' 'NR == 2 {gsub(/[[:space:]]*/, "", $1); print $1}' snowflake_output2.txt)
+            accountLocator=$(awk -F '|' 'NR == 2 {gsub(/[[:space:]]*/, "", $2); print $2}' snowflake_output2.txt)
             echo "accountLocator: $accountLocator"
                                                                                               
