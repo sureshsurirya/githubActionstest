@@ -69,6 +69,6 @@ jobs:
           echo ""
           echo "Locator: $Locator"
           ~/snowflake/snowsql << EOF
-          ALTER SHARE "{{ env.SNOWSQL_CUST_NAME }}_SHARE" ADD ACCOUNTS = '$Locator';
+          ALTER SHARE "{{ env.SNOWSQL_CUST_NAME }}_SHARE" ADD ACCOUNTS = $Locator;
           EOF
           
