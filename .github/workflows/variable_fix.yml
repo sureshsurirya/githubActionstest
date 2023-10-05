@@ -84,10 +84,11 @@ jobs:
           ~/snowflake/snowsql <<EOF > snowflake_output2.txt
           USE ROLE ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          SELECT PARSE_JSON("status"):ACCOUNTLOCATOR::string as ACCOUNTLOCATOR FROM sub_account_details_list;
+          SELECT PARSE_JSON("status"):accountLocator::string as accountLocator FROM sub_account_details_list;
           EOF
+          cat snowflake_output2.txt
       - name: extract Locator
         run: |
-            ACCOUNTLOCATOR=$(grep -oP 'ACCOUNTLOCATOR\s*\|\s*\K[^|]+' snowflake_output2.txt | tr -d '[:space:]')
-            echo "ACCOUNTLOCATOR: $ACCOUNTLOCATOR" 
+            accountLocator=$(grep -oP 'accountLocator\s*\|\s*\K[^|]+' snowflake_output2.txt | tr -d '[:space:]')
+            echo "accountLocator: $accountLocator" 
                                                                                               
