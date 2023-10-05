@@ -68,7 +68,7 @@ jobs:
           Locator=`jq '.accountLocator' url.json`
           echo ""
           echo "Locator: $Locator"
-          url = `jq '.url' url.json`
+          accountLocatorUrl = `jq '.accountLocatorUrl' url.json`
           echo ""
-          echo "url: $url"
+          echo "accountLocatorUrl: $accountLocatorUrl"
           
