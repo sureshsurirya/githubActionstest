@@ -63,6 +63,7 @@ jobs:
           cat account_details.txt | wc -l
           head -n 6 account_details.txt | tail -n 1 > url.json
           cat url.json
+          jq '.accountLocator' url.json
       - name: Execute Snowflake SQL Command and Save Output to File
         run: |
           ~/snowflake/snowsql <<EOF > snowflake_output.txt
