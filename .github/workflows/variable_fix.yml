@@ -88,8 +88,6 @@ jobs:
           EOF
       - name: extract Locator
         run: |
-            accountLocator=$(grep -oP 'ACCOUNTLOCATOR\s*\|\s*\K\S+' snowflake_output2.txt)
-            echo "ACCOUNTLOCATOR: $accountLocator"
-     
-  
+            accountLocator=$(awk -F '|' '/ACCOUNTLOCATOR/ {gsub(/[[:space:]]*/, "", $2); print $2}' snowflake_output2.txt)
+            echo "ACCOUNTLOCATOR: $accountLocator"  
                                                                                               
