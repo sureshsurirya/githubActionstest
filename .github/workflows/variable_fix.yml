@@ -85,16 +85,8 @@ jobs:
           USE ROLE ACCOUNTADMIN;
           USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
           SELECT PARSE_JSON("status"):accountLocator::string as accountLocator FROM sub_account_details_list;
-          EOF
-
-      - name: Display Snowflake Output2 File
-        run: |
-          # Display the contents of the snowflake_output2.txt file
-          cat snowflake_output2.txt
-      - name: Extract URL Value from Snowflake Output File
-        run: |
-          # Extract the URL value from the snowflake_output2.txt file
           accountLocator=$(grep -oP 'ACCOUNTLOCATOR\s*\|\s*\K\S+' snowflake_output2.txt)
+          EOF
           echo "ACCOUNTLOCATOR: $accountLocator"
      
   
