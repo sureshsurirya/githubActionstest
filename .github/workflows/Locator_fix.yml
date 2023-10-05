@@ -63,27 +63,4 @@ jobs:
           cat account_details.txt | wc -l
           head -n 6 account_details.txt | tail -n 1 > url.json
           cat url.json
-          jq '.accountLocator' url.json
-      - name: Execute Snowflake SQL Command and Save Output to File
-        run: |
-          ~/snowflake/snowsql <<EOF > snowflake_output.txt
-          USE ROLE ACCOUNTADMIN;
-          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          SELECT PARSE_JSON("status"):url::string as url FROM sub_account_details_list;
-          EOF
-          cat snowflake_output.txt
-
-      - name: Extract URL Value from Snowflake Output File
-        run: |
-          # Extract the URL value from the snowflake_output.txt file
-          url=$(grep -oP 'https://\S+' snowflake_output.txt)
-          echo "URL: $url"
-          
-      - name: Execute Snowflake SQL Command and Save Output to File
-        run: |
-          ~/snowflake/snowsql <<EOF > snowflake_output2.txt
-          USE ROLE ACCOUNTADMIN;
-          USE DATABASE ${{ env.SNOWSQL_CUST_DB }};
-          SELECT PARSE_JSON("status"):accountLocator::string as accountLocator FROM sub_account_details_list;
-          EOF
-          cat snowflake_output2.txt
+          accountLocator=$(jq -r '.accountLocator' url.json)
