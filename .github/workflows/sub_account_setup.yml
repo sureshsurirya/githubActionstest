@@ -28,7 +28,7 @@ jobs:
       run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
       
     - name: Execute SQL against Snowflake
-          ~/snowflake/snowsql <<EOF
+       run:~/snowflake/snowsql <<EOF
             USE ROLE SYSADMIN;
             CREATE ROLE ${{ env.CUST_NAME}};
             EOF
