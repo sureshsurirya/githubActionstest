@@ -1,5 +1,2 @@
-create account myaccount3
-  admin_name = admin
-  admin_password = 'TestPassword1'
-  email = 'myemail@myorg.org'
-  edition = enterprise;
+use role accountadmin;
+CREATE DATABASE ADVARRA_ONCORE_RAW FROM SHARE &{MAIN_LOCATOR}.&{CUST_NAME} ||_SHARE;
