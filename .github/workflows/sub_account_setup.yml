@@ -29,4 +29,6 @@ jobs:
       
     - name: Execute SQL against Snowflake
       run:  |
-          ~/snowflake/snowsql -D MAIN_LOCATOR =$SNOWSQL_MAIN_LOCATOR -D CUST_NAME =$SNOWSQL_CUST_NAME -f /home/runner/work/githubActionstest/githubActionstest/snowflake/views/sub_account.sql;
+          ~/snowflake/snowsql <<EOF
+            USE ROLE ACCOUNTADMIN;
+            CREATE DATABASE ADVARRA_ONCORE_RAW FROM SHARE ${{ env.MAIN_LOCATOR }}.${{ env.CUST_NAME}}_SHARE;
