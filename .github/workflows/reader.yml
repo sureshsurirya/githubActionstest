@@ -1,4 +1,4 @@
-name: edc_deployment
+name: reader_Share_setup
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
