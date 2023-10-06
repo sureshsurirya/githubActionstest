@@ -5,15 +5,8 @@ env:
   SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
   SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
-  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
-  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
-  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
-  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
-  SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
   SNOWSQL_CUST_NAME: ${{ vars.CUST_NAME }}
   SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
-  SNOWSQL_CUST_EMAIL: ${{ vars.CUST_EMAIL }}
-  SNOWSQL_CUST_DB: ${{ vars.CUST_DB }}
   SNOWSQL_CUST_SCHEMA: ${{ vars.CUST_SCHEMA }}
 
 on:
@@ -72,29 +65,11 @@ jobs:
           echo ""
           echo "accountLocatorUrl: $accountLocatorUrl"
           ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_SHARE\" ADD ACCOUNTS = $Locator;"
-
-      - name: Access New Sub-Account
-        run: |
-           # Extract the admin password from the environment variable
-            admin_password="${{ env.SNOWSQL_ADMIN_PASSWORD }}"
-    
-            # Extract the accountLocatorUrl from the environment variable
-            accountLocatorUrl="${{ env.accountLocatorUrl }}"
-    
-            # Perform the authentication and access the sub-account
-            response=$(curl -X POST -c cookies.txt "${accountLocatorUrl}/login" -d "username=admin&password=${admin_password}")
-
-            # Check if the response indicates successful login
-            if [[ $response == *"Successfully logged in"* ]]; then
-            echo "Successfully logged in to the sub-account."
-      
-                # Now you can make further requests to the sub-account as needed.
-              # For example, you can use `curl` to perform additional actions.
-              # Example:
-              # curl -b cookies.txt "${accountLocatorUrl}/some_endpoint"
-      
-              else
-                echo "Login to the sub-account failed."
-                exit 1
-                 fi
-
+          SNOWSQL_ACCOUNT = $accountLocatorUrl
+          SNOWSQL_USER = Admin
+          SNOWSQL_PWD =${{ env.SNOWSQL_ADMIN_PASSWORD }}
+          ~/snowflake/snowsql << EOF
+          select current_account();
+          EOF
+          
+          
