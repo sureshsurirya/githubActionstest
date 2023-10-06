@@ -36,5 +36,6 @@ jobs:
         run: |
           ~/snowflake/snowsql <<EOF
           USE ROLE ACCOUNTADMIN;
-          CREATE ROLE ${{ env.SNOWSQL_CUST_NAME }};
+          CREATE OR REPLACE WAREHOUSE ${{ env.SNOWSQL_CUST_NAME }}_WH;
+          --CREATE ROLE ${{ env.SNOWSQL_CUST_NAME }};
           EOF
