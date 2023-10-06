@@ -1,4 +1,4 @@
-name: reader_Share_setup
+name: sub_account_setup
 
 env:
   SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
