@@ -13,7 +13,7 @@ on:
   workflow_dispatch:                                                
 jobs:                         
   executequery:                           
-    name: EDC Deployment Job                          
+    name: sub_account_setup                          
     runs-on: ubuntu-latest                           
     steps:
     - name: Checkout
