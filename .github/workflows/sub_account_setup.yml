@@ -29,4 +29,4 @@ jobs:
       
     - name: Execute SQL against Snowflake
       run:  |
-          ~/snowflake/snowsql -f /home/runner/work/githubActionstest/githubActionstest/snowflake/views/sub_account.sql;
+          ~/snowflake/snowsql _D MAIN_LOCATOR =$SNOWSQL_MAIN_LOCATOR -D CUST_NAME =$SNOWSQL_CUST_NAME -f /home/runner/work/githubActionstest/githubActionstest/snowflake/views/sub_account.sql;
