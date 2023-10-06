@@ -35,6 +35,6 @@ jobs:
       - name: Setup SnowSQL and Create Snowflake Account
         run: |
           ~/snowflake/snowsql <<EOF
-          USE ROLE SYSADMIN;
+          USE ROLE ACCOUNTADMIN;
           CREATE ROLE ${{ env.SNOWSQL_CUST_NAME }};
           EOF
