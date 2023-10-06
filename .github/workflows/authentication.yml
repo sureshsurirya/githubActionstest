@@ -75,7 +75,7 @@ jobs:
           Sub_account_trimmed_url=$(echo "$accountLocatorUrl" | grep -oP 'https:\/\/\K[^.]+\.[^.]+\.\w+')
           echo "$Sub_account_trimmed_url"
           ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_SHARE\" ADD ACCOUNTS = $Locator;"
-          SNOWSQL_ACCOUNT=ag15938.ap-south-1.aws.snowflakecomputing.com
+          SNOWSQL_ACCOUNT="$Sub_account_trimmed_url"
           SNOWSQL_USER=Admin
           SNOWSQL_ROLE=SYSADMIN
           SNOWSQL_PWD="${{ env.SNOWSQL_ADMIN_PASSWORD }}"
