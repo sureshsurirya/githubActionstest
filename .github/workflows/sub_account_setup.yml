@@ -4,13 +4,14 @@ env:
   SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
   SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
-  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME}}
-  SNOWSQL_MAIN_LOCATOR: ${{vars.MAIN_LOCATOR }}
+  SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME }}
+  SNOWSQL_MAIN_LOCATOR: ${{ vars.MAIN_LOCATOR }}
   
 # Controls when the workflow will run
 on:
   # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:                                                
+  workflow_dispatch:
+    
 jobs:                         
   executequery:                           
     name: sub_account_setup                          
@@ -19,16 +20,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Download SnowSQL
-      run:  curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+      run: curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
     - name: Install SnowSQL
-      run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+      run: |
+        SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
     - name: Test installation
-      run:  ~/snowflake/snowsql -v
+      run: ~/snowflake/snowsql -v
     - name: Variable Substitution
       run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
       
     - name: Execute SQL against Snowflake
-       run:~/snowflake/snowsql <<EOF
-            USE ROLE SYSADMIN;
-            CREATE ROLE ${{ env.CUST_NAME}};
-            EOF
+      run: |
+        ~/snowflake/snowsql <<EOF
+        USE ROLE SYSADMIN;
+        CREATE ROLE ${{ env.CUST_NAME }};
+        EOF
