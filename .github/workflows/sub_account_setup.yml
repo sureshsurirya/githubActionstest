@@ -37,5 +37,10 @@ jobs:
           ~/snowflake/snowsql <<EOF
           USE ROLE ACCOUNTADMIN;
           CREATE OR REPLACE WAREHOUSE ${{ env.SNOWSQL_CUST_NAME }}_WH;
-          --CREATE ROLE ${{ env.SNOWSQL_CUST_NAME }};
+          CREATE OR REPLACE ROLE ${{ env.SNOWSQL_CUST_NAME }}_ROLE;
+          USE ROLE USERADMIN;
+          CREATE USER ${{ env.SNOWSQL_CUST_NAME }} PASSWORD='Welcome@123';
+          USE ROLE ACCOUNTADMIN;
+          GRANT ROLE ${{ env.SNOWSQL_CUST_NAME }}_ROLE TO USER ${{ env.SNOWSQL_CUST_NAME }};
+          GRANT USAGE ON WAREHOUSE TO ROLE ${{ env.SNOWSQL_CUST_NAME }}_ROLE;
           EOF
