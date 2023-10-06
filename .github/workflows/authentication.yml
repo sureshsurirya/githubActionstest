@@ -73,7 +73,7 @@ jobs:
           echo "accountLocatorUrl: $accountLocatorUrl"
           trimmed_url=$(echo "$accountLocatorUrl" | sed 's#https://##;s#\.snowflakecomputing\.com##')
           echo "$trimmed_url"
-          ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_SHARE\" ADD ACCOUNTS = $Locator;"
+          ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_ONCORE_RAW_SHARE\" ADD ACCOUNTS = $Locator;"
           SNOWSQL_ACCOUNT="$trimmed_url"
           SNOWSQL_USER=Admin
           SNOWSQL_ROLE=SYSADMIN
@@ -99,6 +99,6 @@ jobs:
           GRANT CREATE TABLE ON SCHEMA ADVARRA_CLOUD_ONCORE.VIEWS_WORKSPACE TO ROLE ${{ env.SNOWSQL_CUST_NAME }};
           GRANT CREATE VIEW ON SCHEMA ADVARRA_CLOUD_ONCORE.VIEWS_WORKSPACE TO ROLE ${{ env.SNOWSQL_CUST_NAME }};
           CREATE OR REPLACE DATABASE ADVARRA_CLOUD_ONCORE_MODELLED;
-          GRANT USAGE ON DATABASE TO ROLE ${{ env.SNOWSQL_CUST_NAME }};
+          GRANT USAGE ON DATABASE ADVARRA_CLOUD_ONCORE_MODELLED TO ROLE ${{ env.SNOWSQL_CUST_NAME }};
           EOF
           
