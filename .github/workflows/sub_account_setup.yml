@@ -1,11 +1,11 @@
-name: Locator_fix
+name: sub_account_setup
 
 env:
   SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
   SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
-  SNOWSQL_MAIN_LOCATOR: ${{ vars.CUST_EMAIL }}
-  SNOWSQL_
+  SNOWSQL_MAIN_LOCATOR: ${{ vars.MAIN_LOCATOR }}
+  SNOWSQL_CUST_NAME: ${{ vars.CUST_NAME }}
 
 on:
   workflow_dispatch:
@@ -35,4 +35,6 @@ jobs:
       - name: Setup SnowSQL and Create Snowflake Account
         run: |
           ~/snowflake/snowsql <<EOF
-          USE ROLE ACCOUNTADMIN;
+          USE ROLE SYSADMIN;
+          CREATE ROLE ${{ ENV.CUST_NAME }};
+          EOF
