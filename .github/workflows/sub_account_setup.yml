@@ -31,4 +31,4 @@ jobs:
       run:  |
           ~/snowflake/snowsql <<EOF
             USE ROLE ACCOUNTADMIN;
-            CREATE DATABASE ADVARRA_ONCORE_RAW FROM SHARE "${{ env.MAIN_LOCATOR }}".${{ env.CUST_NAME}}_SHARE;
+            CREATE DATABASE ADVARRA_ONCORE_RAW FROM SHARE "${{ env.MAIN_LOCATOR }}"."${{ env.CUST_NAME}}_SHARE";
