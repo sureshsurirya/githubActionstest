@@ -5,8 +5,15 @@ env:
   SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
   SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
+  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
+  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
+  SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
   SNOWSQL_CUST_NAME: ${{ vars.CUST_NAME }}
   SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
+  SNOWSQL_CUST_EMAIL: ${{ vars.CUST_EMAIL }}
+  SNOWSQL_CUST_DB: ${{ vars.CUST_DB }}
   SNOWSQL_CUST_SCHEMA: ${{ vars.CUST_SCHEMA }}
 
 on:
@@ -71,5 +78,4 @@ jobs:
           ~/snowflake/snowsql << EOF
           select current_account();
           EOF
-          
           
