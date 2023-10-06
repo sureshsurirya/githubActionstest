@@ -1,18 +1,12 @@
 name: reader_Share_setup
 
 env:
-  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
-  SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
-  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
-  SNOWSQL_SCHEMA: ${{ vars.TGT_SCHEMA }}
-  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
-  SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
+  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
   SNOWSQL_CUSTOMER: ${{ vars.CUST_NAME}}
+  SNOWSQL_MAIN_LOCATOR: ${{vars.MAIN_LOCATOR }}
   
-
 # Controls when the workflow will run
 on:
   # Allows you to run this workflow manually from the Actions tab
