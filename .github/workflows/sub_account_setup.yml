@@ -36,5 +36,5 @@ jobs:
         run: |
           ~/snowflake/snowsql <<EOF
           USE ROLE SYSADMIN;
-          CREATE ROLE ${{ env.CUST_NAME }};
+          CREATE ROLE ${{ env.SNOWSQL_CUST_NAME }};
           EOF
