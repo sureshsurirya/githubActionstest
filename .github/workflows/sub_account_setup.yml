@@ -35,12 +35,11 @@ jobs:
       - name: Setup SnowSQL and Create Snowflake Account
         run: |
           ~/snowflake/snowsql <<EOF
-          USE ROLE ACCOUNTADMIN;
+          USE ROLE SYSADMIN;
           CREATE OR REPLACE WAREHOUSE ${{ env.SNOWSQL_CUST_NAME }}_WH;
+          USE ROLE SECURITYADMIN;
           CREATE OR REPLACE ROLE ${{ env.SNOWSQL_CUST_NAME }}_ROLE;
-          USE ROLE USERADMIN;
-          CREATE USER ${{ env.SNOWSQL_CUST_NAME }} PASSWORD='Welcome@123';
-          USE ROLE ACCOUNTADMIN;
+          CREATE OR REPLACE USER ${{ env.SNOWSQL_CUST_NAME }} PASSWORD='Welcome@123' DEFAULT_ROLE=${{ env.SNOWSQL_CUST_NAME }}_ROLE DEFAULT_WAREHOUSE=
           GRANT ROLE ${{ env.SNOWSQL_CUST_NAME }}_ROLE TO USER ${{ env.SNOWSQL_CUST_NAME }};
           GRANT USAGE ON WAREHOUSE ${{ env.SNOWSQL_CUST_NAME }}_WH TO ROLE ${{ env.SNOWSQL_CUST_NAME }}_ROLE;
           EOF
