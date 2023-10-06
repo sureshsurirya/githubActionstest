@@ -101,5 +101,5 @@ jobs:
           EOF
       - name: Concatenate Environment Variables
         run: |
-          CONCATENATED_VARIABLE=""${{ env.SNOWSQL_MAIN_LOCATOR }}"."${{ env.SNOWSQL_CUST_NAME }}_ONCORE_RAW_SHARE""
+          CONCATENATED_VARIABLE="'${{ env.SNOWSQL_MAIN_LOCATOR }}'."${{ env.SNOWSQL_CUST_NAME }}_ONCORE_RAW_SHARE""
           echo "Concatenated Variable: $CONCATENATED_VARIABLE"
