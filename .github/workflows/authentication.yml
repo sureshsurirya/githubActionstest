@@ -73,7 +73,7 @@ jobs:
           echo "accountLocatorUrl: $accountLocatorUrl"
           echo "$accountLocatorUrl" | grep -oP 'https:\/\/\K[^.]+\.[^.]+\.\w+'
           ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_SHARE\" ADD ACCOUNTS = $Locator;"
-          SNOWSQL_ACCOUNT=$accountLocatorUrl
+          SNOWSQL_ACCOUNT=pg61845.ap-south-1
           SNOWSQL_USER=Admin
           SNOWSQL_PWD="${{ env.SNOWSQL_ADMIN_PASSWORD }}"
           ~/snowflake/snowsql << EOF
