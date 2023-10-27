@@ -1,4 +1,4 @@
-name: sub_authentication_setup
+name: old_code
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
