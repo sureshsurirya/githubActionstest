@@ -1,4 +1,4 @@
-name: Sub_Acc_setup_final
+name: Sub_Acc_test
 
 env:
   SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
