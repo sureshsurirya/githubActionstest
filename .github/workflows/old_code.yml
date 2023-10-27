@@ -69,10 +69,10 @@ jobs:
           Locator=`jq -r '.accountLocator' url.json`
           echo ""
           echo "Locator: $Locator"
-          Url=`jq -r '.Url' url.json`
+          Url=`jq -r '.url' url.json`
           echo ""
-          echo "Url: $Url"
-          trimmed_url=$(echo "$Url" | sed 's#https://##;s#\.snowflakecomputing\.com##')
+          echo "Url: $url"
+          trimmed_url=$(echo "$url" | sed 's#https://##;s#\.snowflakecomputing\.com##')
           echo "$trimmed_url"
           ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE \"${{ env.SNOWSQL_CUST_NAME }}_ONCORE_RAW_SHARE\" ADD ACCOUNTS = $Locator;"
           SNOWSQL_ACCOUNT="$trimmed_url"
