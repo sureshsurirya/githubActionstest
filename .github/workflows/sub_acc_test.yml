@@ -54,7 +54,7 @@ jobs:
           ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
           EMAIL = '${{ env.SNOWSQL_CUST_EMAIL }}'
           MUST_CHANGE_PASSWORD = FALSE
-          EDITION = BUSINESS CRITICAL;
+          EDITION = BUSINESS_CRITICAL;
           EOF
 
           cat account_details.txt | wc -l
