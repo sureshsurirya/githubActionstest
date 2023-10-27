@@ -65,7 +65,7 @@ jobs:
           Locator=$(jq -r '.accountLocator' url.json)
           echo ""
           echo "Locator: $Locator"
-          accountLocatorUrl=$(jq -r '.url' url.json)
+          url=$(jq -r '.url' url.json)
           echo ""
           echo "url: $url"
           trimmed_url=$(echo "$url" | sed -e 's/https:\/\///' -e 's/.aws.snowflakecomputing.com//')
