@@ -1,7 +1,7 @@
 name: Sub_Acc_test
 
 env:
-  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
   SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
   SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
