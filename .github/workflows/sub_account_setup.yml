@@ -1,7 +1,7 @@
 name: Sub_Acc_test_final
 
 env:
-  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
   SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
   SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
@@ -68,7 +68,7 @@ jobs:
           url=$(jq -r '.url' url.json)
           echo ""
           echo "url: $url"
-          trimmed_url=$(echo "$url" | sed 's#\.snowflakecomputing\.com##')
+          trimmed_url=$(echo "$url" | sed 's#https://##;s#\.snowflakecomputing\.com##')
           echo "$trimmed_url"
           ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE "${{ env.SNOWSQL_CUST_NAME }}_ONCORE_RAW_SHARE" ADD ACCOUNTS = $Locator SHARE_RESTRICTIONS = FALSE;"
           SNOWSQL_ACCOUNT="$trimmed_url"
