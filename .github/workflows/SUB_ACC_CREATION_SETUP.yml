@@ -70,7 +70,7 @@ jobs:
           sub_acc_url=$(echo "$accountLocatorUrl" | sed 's#https://##;s#\.snowflakecomputing\.com##')
           echo "sub_acc_url: $sub_acc_url"
           ~/snowflake/snowsql -r ACCOUNTADMIN -q "ALTER SHARE ${{ env.SNOWSQL_CUST_NAME }}_ONCORE_RAW_SHARE ADD ACCOUNTS = $Locator;"
-          sleep 60
+          sleep 90
           SNOWSQL_ACCOUNT="$sub_acc_url"
           SNOWSQL_USER=Admin
           SNOWSQL_ROLE=SYSADMIN
