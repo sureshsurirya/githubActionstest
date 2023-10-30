@@ -74,6 +74,9 @@ jobs:
           select current_account();
           EOF
           cat Main_snowflake_locator.txt
+          Main_snowflake_locator=$(tail -n 1 Main_snowflake_locator.txt | cut -f2)
+          echo " "
+          echo "Main_snowflake_locator: $Main_snowflake_locator"
           sleep 120
           SNOWSQL_ACCOUNT="$sub_acc_url"
           SNOWSQL_USER=Admin
