@@ -1,4 +1,4 @@
-name: old_code
+name: old_code_copy
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
