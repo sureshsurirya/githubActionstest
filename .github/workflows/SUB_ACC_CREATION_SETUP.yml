@@ -74,7 +74,7 @@ jobs:
           select current_account();
           EOF
           cat Main_snowflake_locator.txt
-          Main_snowflake_locator$(tail -n +4 Main_snowflake_locator.txt | awk 'NF{print $NF}')
+          Main_snowflake_locator=$(tail -n +4 Main_snowflake_locator.txt | awk 'NF{print $NF}')
           echo " "
           echo "Main_snowflake_locator: $Main_snowflake_locator"
           sleep 120
