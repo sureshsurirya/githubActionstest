@@ -22,7 +22,7 @@ on:
 
 jobs:
   executequery:
-    name: Sub account setup Job final
+    name: Sub account setup Job
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
