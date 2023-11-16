@@ -41,5 +41,6 @@ jobs:
         run: |
           ~/snowflake/snowsql <<EOF
           USE ROLE ACCOUNTADMIN;
-          CREATE OR REPLACE MANAGED ACCOUNT ${{ env.SNOWSQL_CUST_SHORT_NAME }} ADMIN_NAME = ADMIN, ADMIN_PASSWORD='Welcome@123',TYPE = READER;
+          CREATE OR REPLACE MANAGED ACCOUNT ${{ env.SNOWSQL_CUST_SHORT_NAME }}
+          ADMIN_NAME = ADMIN, ADMIN_PASSWORD='Welcome@123',TYPE = READER;
           EOF
