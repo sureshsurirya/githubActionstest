@@ -49,3 +49,13 @@ jobs:
           cat Reader_details.txt | wc -l
           head -n 12 Reader_details.txt | tail -n 1 > url.json
           cat url.json
+          # Remove leading and trailing "|" from the file
+          sed -i 's/^ *| *//; s/ *| *$//' url.json
+          Locator=`jq -r '.url' url.json`
+          echo ""
+          echo "Locator: $Locator"
+          Url=`jq -r '.Url' url.json`
+          echo ""
+          echo "Url: $Url"
+          reader_url=$(echo "$accountLocatorUrl" | sed 's#https://##;s#\.snowflakecomputing\.com##')
+          echo "reader_url: $reader_url"
