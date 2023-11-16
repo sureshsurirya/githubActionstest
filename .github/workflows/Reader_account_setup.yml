@@ -56,3 +56,10 @@ jobs:
           echo "reader_url: $reader_url"
           reader_url_trimmed=$(echo "$reader_url" | sed 's#https://##;s#\.snowflakecomputing\.com##')
           echo "reader_url_trimmed: $reader_url_trimmed"
+          sleep 60
+          SNOWSQL_ACCOUNT = "reader_url_trimmed"
+          SNOWSQL_USER=ADMIN
+          SNOWSQL_ROLE=ACCOUNTADMIN
+          SNOWSQL_PWD="${{ env.SNOWSQL_ADMIN_PASSWORD }}"
+          ~/snowflake/snowsql << EOF
+          select current_account();
