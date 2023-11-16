@@ -55,4 +55,4 @@ jobs:
           echo ""
           echo "reader_url: $reader_url"
           reader_url_trimmed=$(echo "$reader_url" | sed 's#https://##;s#\.snowflakecomputing\.com##')
-          echo "reader_url: $reader_url"
+          echo "reader_url_trimmed: $reader_url_trimmed"
