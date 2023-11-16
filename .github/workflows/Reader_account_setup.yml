@@ -60,7 +60,7 @@ jobs:
           select current_account();
           EOF
           sleep 60
-          SNOWSQL_ACCOUNT = "reader_url_trimmed"
+          SNOWSQL_ACCOUNT="reader_url_trimmed"
           SNOWSQL_USER=ADMIN
           SNOWSQL_ROLE=ACCOUNTADMIN
           SNOWSQL_PWD="${{ env.SNOWSQL_ADMIN_PASSWORD }}"
