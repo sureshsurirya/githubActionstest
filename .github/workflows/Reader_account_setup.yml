@@ -51,8 +51,8 @@ jobs:
           cat url.json
           # Remove leading and trailing "|" from the file
           sed -i 's/^ *| *//; s/ *| *$//' url.json
-          reader_url =`jq -r '.url' url.json`
+          reader_url=`jq -r '.url' url.json`
           echo ""
           echo "reader_url: $reader_url"
-          reader_url_trimmed = $(echo "$reader_url" | sed 's#https://##;s#\.snowflakecomputing\.com##')
+          reader_url_trimmed=$(echo "$reader_url" | sed 's#https://##;s#\.snowflakecomputing\.com##')
           echo "reader_url: $reader_url"
