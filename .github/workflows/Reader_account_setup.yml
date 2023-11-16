@@ -47,3 +47,4 @@ jobs:
             TYPE = READER;
           EOF
           cat Reader_details.txt | wc -l
+          head -n 13 Reader_details.txt | tail -n 1 > url.json
