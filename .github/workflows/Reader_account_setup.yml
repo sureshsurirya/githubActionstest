@@ -63,4 +63,9 @@ jobs:
           SNOWSQL_PWD="${{ env.SNOWSQL_ADMIN_PASSWORD }}"
           ~/snowflake/snowsql << EOF
           select current_account();
+          create or replace warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH;
+          create or replace role EVAL_USER;
+          create or replace role EDC_user;
+          create or replace role Oncore_user;
+          grant usage on warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH to role EVAL_USER;
           EOF
