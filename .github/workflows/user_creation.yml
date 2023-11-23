@@ -1,0 +1,62 @@
+name: edc_deployment_multicust_multifiles
+
+env:
+  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
+  SNOWSQL_WAREHOUSE: ${{ secrets.SNOWSQL_WAREHOUSE }}
+  SNOWSQL_DATABASE: ${{ vars.TGT_DB }}
+  
+  SNOWSQL_RAW_DB: ${{ vars.SRC_DB }}
+  # SNOWSQL_SRC_SCHEMA: ${{ vars.SRC_SCHEMA }}
+  
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the test_cust_deploy branch 
+  # push:
+  #   branches:
+  #     - test_cust_deploy
+  #   paths:
+  #     - 'snowflake/views/**'
+      
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:                                                
+jobs:                         
+  executequery:                           
+    name: EDC Deployment Job - MultipleCustomer_MultiFiles                        
+    runs-on: ubuntu-latest                           
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Download SnowSQL
+      run:  curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+    - name: Install SnowSQL
+      run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+    - name: Test installation
+      run:  ~/snowflake/snowsql -v
+    - name: Variable Substitution
+      run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
+      
+    - name: Execute SQL against Snowflake
+      env:
+        FILE_LIST: ${{ vars.FULL_FILE_LIST }}
+        TGT_SCHEMA_LIST: ${{ vars.TGT_SCHEMA_LIST }}
+      run:  |
+        echo "$(pwd)"
+        echo "$FILE_LIST"
+        echo "$TGT_SCHEMA_LIST"
+        IFS="," read -a myarray <<< ${{ env.TGT_SCHEMA_LIST }}
+        # echo "${myarray[@]}"
+        for i in "${myarray[@]}"; do
+          echo "Schema"
+          echo "$i"
+          IFS="," read -a myarray1 <<< ${{ env.FILE_LIST }}
+          # echo "${myarray1[@]}"
+          for j in "${myarray1[@]}"; do
+            echo "File"
+            echo "$j"
+            ~/snowflake/snowsql -s $i -D CUST_RAW_DB=$SNOWSQL_RAW_DB -D CUST_SCHEMA=$i -f /home/runner/work/datascience-edc/datascience-edc/snowflake/views/$j;
+          done
+        done
