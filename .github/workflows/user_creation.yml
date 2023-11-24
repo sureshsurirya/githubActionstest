@@ -31,10 +31,11 @@ jobs:
         echo "$FILE_LIST"
         IFS="," read -ra emails <<< "$FILE_LIST"
         for email in "${emails[@]}"; do
+        password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
         # Create user in Snowflake
-        ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = 'P@ssw0rd' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
+        ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
         # Display username and password for each user
         echo "User created with email: $email"
-        echo "Default Password: P@ssw0rd"
+        echo "Password: $password"
         echo "Please change your password upon first login for security reasons."
         done
