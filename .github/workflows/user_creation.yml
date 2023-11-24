@@ -44,10 +44,10 @@ jobs:
       with:
         server_address: smtp.example.com
         server_port: 587
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
+        username: ${{ vars.EMAIL_USERNAME }}
+        password: ${{ vars.EMAIL_PASSWORD }}
         subject: Snowflake User Creation Details
         body: |
           The following users have been created in Snowflake:
           $(cat user_details.txt)
-        to: ${{ env.EMAIL_TO }}
+        to: ${{ vars.EMAIL_TO }}
