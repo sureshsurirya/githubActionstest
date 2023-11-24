@@ -1,10 +1,10 @@
 name: User_creation_in_snowflake_reader_account
 
 env:
-  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
+  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
   
 on:
   workflow_dispatch:                                                
