@@ -29,7 +29,7 @@ jobs:
         FILE_LIST: ${{ vars.FULL_FILE_LIST }}
       run:  |
         echo "$FILE_LIST"
-        IFS="," read -ra emails <<< ${{ env.FULL_FILE_LIST }}
+        IFS="," read -ra emails <<< "$FILE_LIST"
         for email in "${emails[@]}"; do
         # Create user in Snowflake
         ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = 'P@ssw0rd' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
