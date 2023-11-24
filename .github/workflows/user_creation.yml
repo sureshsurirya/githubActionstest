@@ -46,6 +46,7 @@ jobs:
         server_port: 587
         username: ${{ vars.EMAIL_USERNAME }}
         password: ${{ vars.EMAIL_PASSWORD }}
+        from: suresh.talari@advarra.com
         subject: Snowflake User Creation Details
         body: |
           The following users have been created in Snowflake:
