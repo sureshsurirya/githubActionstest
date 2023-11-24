@@ -34,8 +34,20 @@ jobs:
         password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
         # Create user in Snowflake
         ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
-        # Display username and password for each user
-        echo "User created with email: $email"
-        echo "Password: $password"
-        echo "Please change your password upon first login for security reasons."
+        # Add user details to the list
+         user_details+="User created with email: $email\nPassword: $password\n\n"
         done
+        echo -e "$user_details" > user_details.txt # Save user details to a file
+    - name: Email user details
+      uses: dawidd6/action-send-mail@v2
+      if: always()
+      with:
+        server_address: smtp.example.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: Snowflake User Creation Details
+        body: |
+          The following users have been created in Snowflake:
+          $(cat user_details.txt)
+        to: ${{ env.EMAIL_TO }}
