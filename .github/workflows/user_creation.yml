@@ -42,7 +42,7 @@ jobs:
       uses: dawidd6/action-send-mail@v2
       if: always()
       with:
-        server_address: outlook.office365.com
+        server_address: smtp.office365.com
         server_port: 587
         username: ${{ vars.EMAIL_USERNAME }}
         password: ${{ vars.EMAIL_PASSWORD }}
