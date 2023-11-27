@@ -1,10 +1,10 @@
 name: User_creation_in_snowflake_reader_account
 
 env:
-  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
+  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
 
 on:
   workflow_dispatch:
@@ -27,8 +27,8 @@ jobs:
 
       - name: Execute SQL against Snowflake
         env:
-          FILE_LIST: ${{ secrets.FULL_FILE_LIST }}
-          ROLES_LIST: ${{ secrets.roles_list }}
+          FILE_LIST: ${{ vars.FULL_FILE_LIST }}
+          ROLES_LIST: ${{ vars.roles_list }}
         run: |
           echo "$FILE_LIST"
           IFS="," read -ra emails <<< "$FILE_LIST"
