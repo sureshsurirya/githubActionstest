@@ -8,47 +8,46 @@ env:
   
 on:
   workflow_dispatch:                                                
+  
 jobs:                         
   executequery:                           
     name: User_creation_in_snowflake_reader_account                        
     runs-on: ubuntu-latest                           
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Download SnowSQL
-      run:  curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
-    - name: Install SnowSQL
-      run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
-    - name: Test installation
-      run:  ~/snowflake/snowsql -v
-    - name: Variable Substitution
-      run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download SnowSQL
+        run: curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+      - name: Install SnowSQL
+        run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+      - name: Test installation
+        run: ~/snowflake/snowsql -v
+      - name: Variable Substitution
+        run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
       
-    - name: Execute SQL against Snowflake
-      env:
-        FILE_LIST: ${{ vars.FULL_FILE_LIST }}
-      run:  |
-        echo "$FILE_LIST"
-        IFS="," read -ra emails <<< "$FILE_LIST"
-        for email in "${emails[@]}"; do
-        password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
-        # Create user in Snowflake
-        ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
-        # Add user details to the list
-         user_details+="User created with email: $email\nPassword: $password\n\n"
-        done
-        echo -e "$user_details" > user_details.txt # Save user details to a file
-    - name: Email user details
-      uses: dawidd6/action-send-mail@v2
-      if: always()
-      with:
-        server_address: smtp.office365.com
-        server_port: 587
-        username: ${{ vars.EMAIL_USERNAME }}
-        password: ${{ vars.EMAIL_PASSWORD }}
-        from: suresh.talari@advarra.com
-        subject: Snowflake User Creation Details
-        body: |
-          The following users have been created in Snowflake:
-          $(cat user_details.txt)
-        to: ${{ vars.EMAIL_TO }}
+      - name: Execute SQL against Snowflake
+        env:
+          FILE_LIST: ${{ vars.FULL_FILE_LIST }}
+          ROLES_LIST: ${{ vars.roles_list }}
+        run: |
+          echo "$FILE_LIST"
+          IFS="," read -ra emails <<< "$FILE_LIST"
+          IFS="," read -ra roles <<< "$ROLES_LIST"
+          for ((i=0; i<${#emails[@]}; ++i)); do
+            email=${emails[i]}
+            password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
+            
+            # Create user in Snowflake
+            ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
+            
+            # Assign roles to the user
+            for role in "${roles[@]}"; do
+              ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
+            done
+            
+            # Display username, password, and assigned roles for each user
+            echo "User created with email: $email"
+            echo "Password: $password"
+            echo "Roles assigned to user '$email': ${roles[@]}"
+            echo "Please change your password upon first login for security reasons."
+          done
