@@ -38,14 +38,14 @@ jobs:
             password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
             
             # Check if the user already exists
-            user_exists=$(/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS LIKE '$email';" | grep -c "$email")
+            user_exists=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS LIKE '$email';" | grep -c "$email")
             
             if [ "$user_exists" -eq 1 ]; then
               # Display message for existing user
               echo "User '$email' already exists."
               
               # Check and assign missing roles for the existing user
-              assigned_roles=($(/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW GRANTS TO USER \"$email\";" | grep -oE '[^\s]+$'))
+              assigned_roles=($(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW GRANTS TO USER \"$email\";" | grep -oE '[^\s]+$'))
               for role in "${roles[@]}"; do
                 if ! [[ " ${assigned_roles[@]} " =~ " $role " ]]; then
                   ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
