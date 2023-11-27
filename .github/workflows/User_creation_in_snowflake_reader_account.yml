@@ -33,8 +33,7 @@ jobs:
           echo "$FILE_LIST"
           IFS="," read -ra emails <<< "$FILE_LIST"
           IFS="," read -ra roles <<< "$ROLES_LIST"
-          for ((i=0; i<${#emails[@]}; ++i)); do
-            email=${emails[i]}
+          for email in "${emails[@]}"; do
             password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
             
             # Check if the user already exists
@@ -50,6 +49,8 @@ jobs:
                 if ! [[ " ${assigned_roles[@]} " =~ " $role " ]]; then
                   ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
                   echo "Role '$role' granted to user '$email'."
+                else
+                  echo "Role '$role' already granted to user '$email'."
                 fi
               done
               
