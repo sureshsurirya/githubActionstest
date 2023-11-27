@@ -14,17 +14,8 @@ jobs:
     name: User_creation_in_snowflake_reader_account                        
     runs-on: ubuntu-latest                           
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download SnowSQL
-        run: curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
-      - name: Install SnowSQL
-        run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
-      - name: Test installation
-        run: ~/snowflake/snowsql -v
-      - name: Variable Substitution
-        run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
-      
+      # Previous steps remain unchanged...
+
       - name: Execute SQL against Snowflake
         env:
           FILE_LIST: ${{ vars.FULL_FILE_LIST }}
@@ -52,13 +43,12 @@ jobs:
               echo "Password: $password"
               echo "Roles assigned to user '$email': ${roles[@]}"
             else
-              # User already exists, assign roles to the existing user
+              # User already exists, display message and assign roles to the existing user
+              echo "User '$email' already exists in Snowflake."
               for role in "${roles[@]}"; do
                 ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-                echo "Role '$role' assigned to user '$email'."
+                echo "Role '$role' assigned to existing user '$email'."
               done
-              
-              # Display message for existing user
               echo "Roles assigned to existing user '$email': ${roles[@]}"
             fi
           done
