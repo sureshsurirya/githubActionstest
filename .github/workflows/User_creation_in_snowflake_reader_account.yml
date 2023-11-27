@@ -1,10 +1,10 @@
 name: User_creation_in_snowflake_reader_account
 
 env:
-  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
+  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
 
 on:
   workflow_dispatch:
@@ -27,37 +27,23 @@ jobs:
 
       - name: Execute SQL against Snowflake
         env:
-          FILE_LIST: ${{ vars.FULL_FILE_LIST }}
-          ROLES_LIST: ${{ vars.roles_list }}
+          FILE_LIST: ${{ secrets.FULL_FILE_LIST }}
+          ROLES_LIST: ${{ secrets.roles_list }}
         run: |
           echo "$FILE_LIST"
           IFS="," read -ra emails <<< "$FILE_LIST"
           IFS="," read -ra roles <<< "$ROLES_LIST"
           for email in "${emails[@]}"; do
-            # Check if the user already exists in Snowflake
-            user_exists=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS;" | grep "$email")
+            password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
 
-            if [ -z "$user_exists" ]; then
-              # User doesn't exist, create the user and assign roles
-              password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
+            ~/snowflake/snowsql -u "$SNOWSQL_USER" -o friendly -d "$SNOWSQL_ACCOUNT" -w "${SNOWSQL_ROLE}" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
+            for role in "${roles[@]}"; do
+              ~/snowflake/snowsql -u "$SNOWSQL_USER" -o friendly -d "$SNOWSQL_ACCOUNT" -w "${SNOWSQL_ROLE}" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
+              echo "Role '$role' granted to user '$email'."
+            done
 
-              ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
-              for role in "${roles[@]}"; do
-                ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-                echo "Role '$role' granted to user '$email'."
-              done
-
-              # Display password and role assignment for newly created user
-              echo "User created with email: $email"
-              echo "Password: $password"
-              echo "Roles assigned to user '$email': ${roles[@]}"
-            else
-              # User already exists, display message and assign roles to the existing user
-              echo "User '$email' already exists in Snowflake."
-              for role in "${roles[@]}"; do
-                ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-                echo "Role '$role' assigned to existing user '$email'."
-              done
-              echo "Roles assigned to existing user '$email': ${roles[@]}"
-            fi
+            # Display password and role assignment for the newly created user
+            echo "User created with email: $email"
+            echo "Password: $password"
+            echo "Roles assigned to user '$email': ${roles[@]}"
           done
