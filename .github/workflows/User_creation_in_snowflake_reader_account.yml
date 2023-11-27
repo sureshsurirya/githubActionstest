@@ -36,17 +36,31 @@ jobs:
           for email in "${emails[@]}"; do
             password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
             
-            # Create user in Snowflake
-            ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
+            # Check if the user already exists
+            user_exists=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS LIKE '$email';" | grep -c "$email")
             
-            # Assign roles to the user
-            for role in "${roles[@]}"; do
-              ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-            done
-            
-            # Display username and password for newly created user
-            echo "User created with email: $email"
-            echo "Password: $password"
-            echo "Roles assigned to user '$email': ${roles[@]}"
-            echo "Please change your password upon first login for security reasons."
+            if [ "$user_exists" -eq 1 ]; then
+              # Display message for existing user and assign missing roles
+              assigned_roles=($(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW GRANTS TO USER \"$email\";" | grep -oE '[^\s]+$'))
+              for role in "${roles[@]}"; do
+                if ! [[ " ${assigned_roles[@]} " =~ " $role " ]]; then
+                  ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
+                  echo "Role '$role' granted to existing user '$email'."
+                else
+                  echo "Role '$role' already granted to existing user '$email'."
+                fi
+              done
+            else
+              # Create user in Snowflake and assign roles
+              ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
+              for role in "${roles[@]}"; do
+                ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
+              done
+              
+              # Display new user creation details
+              echo "User created with email: $email"
+              echo "Password: $password"
+              echo "Roles assigned to user '$email': ${roles[@]}"
+              echo "Please change your password upon first login for security reasons."
+            fi
           done
