@@ -36,27 +36,17 @@ jobs:
           for email in "${emails[@]}"; do
             password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
             
-            # Check if the user already exists
-            user_exists=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS LIKE '$email';" | grep -c "$email")
+            # Create user in Snowflake
+            ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
             
-            if [ "$user_exists" -eq 1 ]; then
-              # Display message for existing user
-              echo "User '$email' already exists."
-            else
-              # Create user in Snowflake
-              ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
-              
-              # Display username and password for newly created user
-              echo "User created with email: $email"
-              echo "Password: $password"
-              
-              # Assign roles to the user
-              for role in "${roles[@]}"; do
-                ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-              done
-              
-              # Display assigned roles to the user
-              echo "Roles assigned to user '$email': ${roles[@]}"
-              echo "Please change your password upon first login for security reasons."
-            fi
+            # Assign roles to the user
+            for role in "${roles[@]}"; do
+              ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
+            done
+            
+            # Display username and password for newly created user
+            echo "User created with email: $email"
+            echo "Password: $password"
+            echo "Roles assigned to user '$email': ${roles[@]}"
+            echo "Please change your password upon first login for security reasons."
           done
