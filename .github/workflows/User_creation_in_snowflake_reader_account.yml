@@ -42,32 +42,21 @@ jobs:
             if [ "$user_exists" -eq 1 ]; then
               # Display message for existing user
               echo "User '$email' already exists."
-              
-              # Check and assign missing roles for the existing user
-              assigned_roles=($(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW GRANTS TO USER \"$email\";" | grep -oE '[^\s]+$'))
-              for role in "${roles[@]}"; do
-                if ! [[ " ${assigned_roles[@]} " =~ " $role " ]]; then
-                  ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-                  echo "Role '$role' granted to user '$email'."
-                else
-                  echo "Role '$role' already granted to user '$email'."
-                fi
-              done
-              
-              # Display assigned roles to the user
-              echo "Following roles assigned to user '$email': ${roles[@]}"
             else
               # Create user in Snowflake
               ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
               
-              # Assign roles to the user
-              for role in "${roles[@]}"; do
-                ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-              done
-              
-              # Display username, password, and roles for the new user
+              # Display username and password for newly created user
               echo "User created with email: $email"
-              echo "Roles assigned to user '$email': ${roles[@]}"
-              echo "Please change your password upon first login for security reasons."
+              echo "Password: $password"
             fi
+            
+            # Assign roles to the user (existing or newly created)
+            for role in "${roles[@]}"; do
+              ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
+            done
+            
+            # Display assigned roles to the user
+            echo "Roles assigned to user '$email': ${roles[@]}"
+            echo "Please change your password upon first login for security reasons."
           done
