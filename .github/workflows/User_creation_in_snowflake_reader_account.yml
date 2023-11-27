@@ -49,14 +49,14 @@ jobs:
               # Display username and password for newly created user
               echo "User created with email: $email"
               echo "Password: $password"
+              
+              # Assign roles to the user
+              for role in "${roles[@]}"; do
+                ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
+              done
+              
+              # Display assigned roles to the user
+              echo "Roles assigned to user '$email': ${roles[@]}"
+              echo "Please change your password upon first login for security reasons."
             fi
-            
-            # Assign roles to the user (existing or newly created)
-            for role in "${roles[@]}"; do
-              ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-            done
-            
-            # Display assigned roles to the user
-            echo "Roles assigned to user '$email': ${roles[@]}"
-            echo "Please change your password upon first login for security reasons."
           done
