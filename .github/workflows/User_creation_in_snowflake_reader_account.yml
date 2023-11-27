@@ -5,16 +5,25 @@ env:
   SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
   SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
   SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
-  
+
 on:
-  workflow_dispatch:                                                
-  
-jobs:                         
-  executequery:                           
-    name: User_creation_in_snowflake_reader_account                        
-    runs-on: ubuntu-latest                           
+  workflow_dispatch:
+
+jobs:
+  executequery:
+    name: User_creation_in_snowflake_reader_account
+    runs-on: ubuntu-latest
     steps:
-      # Previous steps remain unchanged...
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download SnowSQL
+        run: curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+      - name: Install SnowSQL
+        run: SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+      - name: Test installation
+        run: ~/snowflake/snowsql -v
+      - name: Variable Substitution
+        run: echo "variable_substitution=true" | tee -a ~/.snowsql/config
 
       - name: Execute SQL against Snowflake
         env:
@@ -27,17 +36,17 @@ jobs:
           for email in "${emails[@]}"; do
             # Check if the user already exists in Snowflake
             user_exists=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS LIKE '%$email%';")
-            
+
             if [ -z "$user_exists" ]; then
               # User doesn't exist, create the user and assign roles
               password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
-              
+
               ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
               for role in "${roles[@]}"; do
                 ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
                 echo "Role '$role' granted to user '$email'."
               done
-              
+
               # Display password and role assignment for newly created user
               echo "User created with email: $email"
               echo "Password: $password"
