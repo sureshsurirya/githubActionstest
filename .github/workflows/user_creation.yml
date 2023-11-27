@@ -38,26 +38,16 @@ jobs:
             password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
             
             # Create user in Snowflake
-            ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
+            ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
             
             # Assign roles to the user
             for role in "${roles[@]}"; do
               ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
             done
             
-            # Check if the user already exists
-            user_exists=$(/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS LIKE '$email';" | grep -c "$email")
-            
-            if [ "$user_exists" -eq 1 ]; then
-              # Display message for existing user and assigned roles
-              echo "User '$email' already exists."
-              # Display only the assigned roles
-              echo "Following roles assigned to user '$email': ${roles[@]}"
-            else
-              # Display username, password, and assigned roles for the new user
-              echo "User created with email: $email"
-              echo "Password: $password"
-              echo "Roles assigned to user '$email': ${roles[@]}"
-              echo "Please change your password upon first login for security reasons."
-            fi
+            # Display username, password, and assigned roles for the new user
+            echo "User created with email: $email"
+            echo "Password: $password"
+            echo "Roles assigned to user '$email': ${roles[@]}"
+            echo "Please change your password upon first login for security reasons."
           done
