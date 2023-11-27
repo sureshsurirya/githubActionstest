@@ -35,7 +35,7 @@ jobs:
           IFS="," read -ra roles <<< "$ROLES_LIST"
           for email in "${emails[@]}"; do
             # Check if the user already exists in Snowflake
-            user_exists=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS LIKE '%$email%';")
+            user_exists=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -q "SHOW USERS;" | grep "$email")
 
             if [ -z "$user_exists" ]; then
               # User doesn't exist, create the user and assign roles
