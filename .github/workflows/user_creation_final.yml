@@ -59,14 +59,15 @@ jobs:
               ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE ROLE \"$role\";"
             fi
             
-            # Create user in Snowflake
-            ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
-            
             # Assign role to the user
             ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
             
-            echo "User created with email: $email"
-            echo "Password: $password"
             echo "Role assigned: $role"
           done
+          
+          # Create user in Snowflake
+          ~/snowflake/snowsql -u "$SNOWSQL_USER" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
+          
+          echo "User created with email: $email"
+          echo "Password: $password"
         done
