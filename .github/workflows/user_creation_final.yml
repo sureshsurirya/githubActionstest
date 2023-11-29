@@ -11,7 +11,7 @@ on:
   
 jobs:                         
   executequery:                           
-    name: User_creation                      
+    name: User_creation                       
     runs-on: ubuntu-latest                           
     steps:
     - name: Checkout
@@ -30,7 +30,8 @@ jobs:
         FILE_LIST: ${{ vars.FULL_FILE_LIST }}
         APPLICATION_NAMES: ${{ vars.APPLICATION_NAMES }}
       run:  |
-        echo "$FILE_LIST"
+        echo "FILE_LIST: $FILE_LIST"
+        echo "APPLICATION_NAMES: $APPLICATION_NAMES"
         IFS="," read -ra emails <<< "$FILE_LIST"
         IFS="," read -ra application_names <<< "${APPLICATION_NAMES//,/ }" # Split by comma into array
         
@@ -38,6 +39,7 @@ jobs:
           password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
           
           for app in "${application_names[@]}"; do
+            echo "Current App: $app"
             case $app in
               "EVAL")
                 role="EVAL_READER_ROLE"
