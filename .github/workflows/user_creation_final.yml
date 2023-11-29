@@ -1,10 +1,10 @@
 name: User_creation_final
 
 env:
-  SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
-  SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
-  SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
-  SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
+  SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
+  SNOWSQL_USER: ${{ vars.SNOWSQL_USER }}
+  SNOWSQL_PWD: ${{ vars.SNOWSQL_PWD }}
+  SNOWSQL_ROLE: ${{ vars.SNOWSQL_ROLE }}
   
 on:
   workflow_dispatch:                                                
@@ -27,17 +27,17 @@ jobs:
       
     - name: Execute SQL against Snowflake
       env:
-        FILE_LIST: ${{ secrets.FULL_FILE_LIST }}
-        APPLICATION_NAMES: ${{ secrets.APPLICATION_NAMES }}
+        FILE_LIST: ${{ vars.FULL_FILE_LIST }}
+        APPLICATION_NAME: ${{ vars.APPLICATION_NAME }}
       run:  |
         echo "$FILE_LIST"
         IFS="," read -ra emails <<< "$FILE_LIST"
-        IFS="," read -ra application_names <<< "${APPLICATION_NAMES^^}" # Converting to uppercase for comparison
+        IFS="," read -ra application_names <<< "${APPLICATION_NAME^^}" # Converting to uppercase for comparison
         
         for email in "${emails[@]}"; do
           password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
           
-          for app in "${application_names[@]}"; do
+          for app in "${application_name[@]}"; do
             case $app in
               "ONCORE")
                 role="ONCORE_READER_ROLE"
