@@ -8,79 +8,68 @@ env:
 
 on:
   workflow_dispatch:
-    inputs:
-      FULL_FILE_LIST:
-        description: 'List of emails'
-        required: true
-        default: 'kohli.anushka@cric.com,rohith.vamika@ipl.com'
-      APPLICATION_NAMES:
-        description: 'List of application names'
-        required: true
-        default: 'EVAL,EDC'
 
 jobs:
   executequery:
     name: User and Role Assignment
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       
-    - name: Download SnowSQL
-      run: |
-        curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+      - name: Download SnowSQL
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
 
-    - name: Install SnowSQL
-      run: |
-        SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+      - name: Install SnowSQL
+        run: |
+          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
 
-    - name: Test installation
-      run: ~/snowflake/snowsql -v
+      - name: Test installation
+        run: ~/snowflake/snowsql -v
 
-    - name: Execute SQL against Snowflake
-      env:
-        FULL_FILE_LIST: ${{ github.event.inputs.FULL_FILE_LIST }}
-        APPLICATION_NAMES: ${{ github.event.inputs.APPLICATION_NAMES }}
-      run: |
-        echo "FULL_FILE_LIST: $FULL_FILE_LIST"
-        echo "APPLICATION_NAMES: $APPLICATION_NAMES"
+      - name: Execute SQL against Snowflake
+        env:
+          FULL_FILE_LIST: ${{ vars.FULL_FILE_LIST }}
+          APPLICATION_NAMES: ${{ vars.APPLICATION_NAMES }}
+        run: |
+          echo "FULL_FILE_LIST: $FULL_FILE_LIST"
+          echo "APPLICATION_NAMES: $APPLICATION_NAMES"
 
-        IFS="," read -ra emails <<< "$FULL_FILE_LIST"
-        IFS="," read -ra application_names <<< "$APPLICATION_NAMES"
+          IFS="," read -ra emails <<< "$FULL_FILE_LIST"
+          IFS="," read -ra application_names <<< "$APPLICATION_NAMES"
 
-        # Create user in Snowflake
-        for email in "${emails[@]}"; do
-          password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
-          ~/snowflake/snowsql -u "$SNOWSQL_USER" -p "$SNOWSQL_USER_PASSWORD" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
-          echo "User created with email: $email"
-          echo "Password: $password"
-        done
-
-        # Assign roles based on APPLICATION_NAMES
-        for app in "${application_names[@]}"; do
-          echo "Current App: $app"
-          case $app in
-            "EVAL")
-              role="EVAL_READER_ROLE"
-              ;;
-            "EDC")
-              role="EDC_READER_ROLE"
-              ;;
-            *)
-              echo "Invalid application specified."
-              exit 1
-              ;;
-          esac
-
-          # Check if the role exists, if not, create it
-          role_check=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -p "$SNOWSQL_USER_PASSWORD" -o friendly=false -t -A -q "SHOW ROLES LIKE '$role';")
-          if [ -z "$role_check" ]; then
-            ~/snowflake/snowsql -u "$SNOWSQL_USER" -p "$SNOWSQL_USER_PASSWORD" -q "CREATE ROLE \"$role\";"
-          fi
-
-          # Assign role to the user
+          # Create user in Snowflake
           for email in "${emails[@]}"; do
-            ~/snowflake/snowsql -u "$SNOWSQL_USER" -p "$SNOWSQL_USER_PASSWORD" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
-            echo "Role assigned: $role for User: $email"
+            password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
+            ~/snowflake/snowsql -u "$SNOWSQL_USER" -p "$SNOWSQL_USER_PASSWORD" -q "CREATE USER IF NOT EXISTS \"$email\" PASSWORD = '$password' MUST_CHANGE_PASSWORD = TRUE EMAIL = '$email';"
+            echo "User created with email: $email"
+            echo "Password: $password"
+
+            # Assign roles based on APPLICATION_NAMES
+            for app in "${application_names[@]}"; do
+              echo "Current App: $app"
+              case $app in
+                "EVAL")
+                  role="EVAL_READER_ROLE"
+                  ;;
+                "EDC")
+                  role="EDC_READER_ROLE"
+                  ;;
+                *)
+                  echo "Invalid application specified."
+                  exit 1
+                  ;;
+              esac
+
+              # Check if the role exists, if not, create it
+              role_check=$(~/snowflake/snowsql -u "$SNOWSQL_USER" -p "$SNOWSQL_USER_PASSWORD" -o friendly=false -t -A -q "SHOW ROLES LIKE '$role';")
+              if [ -z "$role_check" ]; then
+                ~/snowflake/snowsql -u "$SNOWSQL_USER" -p "$SNOWSQL_USER_PASSWORD" -q "CREATE ROLE \"$role\";"
+              fi
+
+              # Assign role to the user
+              ~/snowflake/snowsql -u "$SNOWSQL_USER" -p "$SNOWSQL_USER_PASSWORD" -q "GRANT ROLE \"$role\" TO USER \"$email\";"
+              echo "Role assigned: $role for User: $email"
+            done
           done
-        done
