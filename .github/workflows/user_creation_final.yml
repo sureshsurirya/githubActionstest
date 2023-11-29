@@ -1,4 +1,4 @@
-name: User_creation_final
+name: User_creation_in_snowflake_reader_account
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
@@ -11,7 +11,7 @@ on:
   
 jobs:                         
   executequery:                           
-    name: User_creation_final                     
+    name: User_creation_in_snowflake_reader_account                        
     runs-on: ubuntu-latest                           
     steps:
     - name: Checkout
@@ -28,16 +28,16 @@ jobs:
     - name: Execute SQL against Snowflake
       env:
         FILE_LIST: ${{ vars.FULL_FILE_LIST }}
-        APPLICATION_NAME: ${{ vars.APPLICATION_NAME }}
+        APPLICATION_NAMES: ${{ vars.APPLICATION_NAMES }}
       run:  |
         echo "$FILE_LIST"
         IFS="," read -ra emails <<< "$FILE_LIST"
-        IFS="," read -ra application_names <<< "${APPLICATION_NAME^^}" # Converting to uppercase for comparison
+        IFS="," read -ra application_names <<< "${APPLICATION_NAMES//,/ }" # Split by comma into array
         
         for email in "${emails[@]}"; do
           password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8)
           
-          for app in "${application_name[@]}"; do
+          for app in "${application_names[@]}"; do
             case $app in
               "ONCORE")
                 role="ONCORE_READER_ROLE"
