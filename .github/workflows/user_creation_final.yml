@@ -13,6 +13,9 @@ jobs:
   executequery:
     name: User and Role Assignment
     runs-on: ubuntu-latest
+    env:
+      FULL_FILE_LIST: ${{ vars.FULL_FILE_LIST }}
+      APPLICATION_NAMES: ${{ vars.APPLICATION_NAMES }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -29,14 +32,12 @@ jobs:
       run: ~/snowflake/snowsql -v
     
     - name: Execute SQL against Snowflake
-      env:
-        FULL_FILE_LIST: ${{ vars.FULL_FILE_LIST }}
-        APPLICATION_NAMES: ${{ vars.APPLICATION_NAMES }}
       run: |
         echo "FULL_FILE_LIST: $FULL_FILE_LIST"
         echo "APPLICATION_NAMES: $APPLICATION_NAMES"
         
         IFS="," read -ra emails <<< "$FULL_FILE_LIST"
+        IFS="," read -ra application_names <<< "$APPLICATION_NAMES"
         
         # Create user in Snowflake
         for email in "${emails[@]}"; do
@@ -47,8 +48,6 @@ jobs:
         done
         
         # Assign roles based on APPLICATION_NAMES
-        IFS="," read -ra application_names <<< "${APPLICATION_NAMES//,/ }" # Split by comma into array
-        
         for app in "${application_names[@]}"; do
           echo "Current App: $app"
           case $app in
