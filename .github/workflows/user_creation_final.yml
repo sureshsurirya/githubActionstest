@@ -1,4 +1,4 @@
-name: User_creation_in_snowflake_reader_account
+name: User_creation_final
 
 env:
   SNOWSQL_ACCOUNT: ${{ vars.SNOWSQL_ACCOUNT }}
@@ -11,7 +11,7 @@ on:
   
 jobs:                         
   executequery:                           
-    name: User_creation_in_snowflake_reader_account                        
+    name: User_creation_final                        
     runs-on: ubuntu-latest                           
     steps:
     - name: Checkout
