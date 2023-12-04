@@ -74,13 +74,13 @@ jobs:
           SNOWSQL_PWD="$SNOWSQL_ADMIN_PASSWORD"
           ~/snowflake/snowsql << EOF
           select current_account();
-          create warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH";
+          create warehouse "${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH";
           create or replace role EVAL_READER_ROLE;
           create or replace role EDC_READER_ROLE;
           create or replace role ONCORE_READER_ROLE;
-          grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role EVAL_READER_ROLE;
-          grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role EDC_READER_ROLE;
-          grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role ONCORE_READER_ROLE;
+          grant usage on warehouse "${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH" to role EVAL_READER_ROLE;
+          grant usage on warehouse "${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH" to role EDC_READER_ROLE;
+          grant usage on warehouse "${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH" to role ONCORE_READER_ROLE;
           grant role EVAL_READER_ROLE to user admin;
           grant role EDC_READER_ROLE to user admin;
           grant role ONCORE_READER_ROLE to user admin;
