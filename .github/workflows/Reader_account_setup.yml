@@ -8,10 +8,7 @@ env:
   SNOWSQL_WAREHOUSE: ${{ vars.SNOWSQL_WAREHOUSE }}
   SNOWSQL_CUST_SHORT_NAME: ${{ vars.CUST_SHORT_NAME }}
   SNOWSQL_ADMIN_PASSWORD: ${{ vars.ADMIN_PASSWORD }}
-  SNOWSQL_CUST_EMAIL: ${{ vars.CUST_EMAIL }}
-  SNOWSQL_CUST_SCHEMA: ${{ vars.CUST_SCHEMA }}
-  SNOWSQL_MAIN_LOCATOR: ${{ vars.MAIN_LOCATOR }}
-
+  
 on:
   workflow_dispatch:
 
@@ -64,8 +61,15 @@ jobs:
           ~/snowflake/snowsql << EOF
           select current_account();
           create or replace warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH;
-          create or replace role EVAL_USER;
-          create or replace role EDC_user;
-          create or replace role Oncore_user;
-          grant usage on warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH to role EVAL_USER;
+          create or replace role EVAL_READER_ROLE;
+          create or replace role EDC_READER_ROLE;
+          create or replace role ONCORE_READER_ROLE;
+          grant usage on warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH to role EVAL_READER_ROLE;
+          grant usage on warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH to role EDC_READER_ROLE;
+          grant usage on warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH to role ONCORE_READER_ROLE;
+          create database ADVARRA_ONCORE_WORKSPACE;
+          create schema ADVARRA_ONCORE_WORKSPACE.VIEWS_WORKSPACE;
+          grant usage on database ADVARRA_ONCORE_WORKSPACE to role ONCORE_READER_ROLE;
+          grant usage on schema ADVARRA_ONCORE_WORKSPACE.VIEWS_WORKSPACE;
+          grant create view on schema ADVARRA_ONCORE_WORKSPACE.VIEWS_WORKSPACE to role ONCORE_READER_ROLE;
           EOF
