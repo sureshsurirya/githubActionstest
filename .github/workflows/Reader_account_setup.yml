@@ -81,6 +81,9 @@ jobs:
           grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role EVAL_READER_ROLE;
           grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role EDC_READER_ROLE;
           grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role ONCORE_READER_ROLE;
+          grant role EVAL_READER_ROLE to user admin;
+          grant role EDC_READER_ROLE to user admin;
+          grant role ONCORE_READER_ROLE to user admin;
           create database WORKSPACE_CLOUD_ONCORE;
           create schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE;
           grant usage on database WORKSPACE_CLOUD_ONCORE to role ONCORE_READER_ROLE;
