@@ -82,8 +82,8 @@ jobs:
           grant usage on warehouse $SNOWSQL_CUST_SHORT_NAME\_WH to role EDC_READER_ROLE;
           grant usage on warehouse $SNOWSQL_CUST_SHORT_NAME\_WH to role ONCORE_READER_ROLE;
           create database ADVARRA_ONCORE_WORKSPACE;
-          create schema ADVARRA_ONCORE_WORKSPACE.VIEWS_WORKSPACE;
-          grant usage on database ADVARRA_ONCORE_WORKSPACE to role ONCORE_READER_ROLE;
-          grant usage on schema ADVARRA_ONCORE_WORKSPACE.VIEWS_WORKSPACE;
-          grant create view on schema ADVARRA_ONCORE_WORKSPACE.VIEWS_WORKSPACE to role ONCORE_READER_ROLE;
+          create schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE;
+          grant usage on database WORKSPACE_CLOUD_ONCORE to role ONCORE_READER_ROLE;
+          grant usage on schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE;
+          grant create view on schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE to role ONCORE_READER_ROLE;
           EOF
