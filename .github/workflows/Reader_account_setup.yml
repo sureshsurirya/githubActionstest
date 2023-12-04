@@ -24,6 +24,13 @@ jobs:
     name: reader_account
     runs-on: ubuntu-latest
     steps:
+      - name: Input Admin Password and Customer Short Name
+        if: github.event_name == 'workflow_dispatch'
+        id: input_step
+        run: |
+          echo "SNOWSQL_CUST_SHORT_NAME=${{ github.event.inputs.cust_short_name }}" >> $GITHUB_ENV
+          echo "SNOWSQL_ADMIN_PASSWORD=${{ github.event.inputs.admin_password }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -45,9 +52,9 @@ jobs:
         run: |
           ~/snowflake/snowsql <<EOF > Reader_details.txt
           USE ROLE ACCOUNTADMIN;
-          CREATE MANAGED ACCOUNT ${{ env.SNOWSQL_CUST_SHORT_NAME }}
+          CREATE MANAGED ACCOUNT $SNOWSQL_CUST_SHORT_NAME
             ADMIN_NAME = ADMIN
-            ADMIN_PASSWORD = "${{ env.SNOWSQL_ADMIN_PASSWORD }}"
+            ADMIN_PASSWORD = "$SNOWSQL_ADMIN_PASSWORD"
             TYPE = READER;
           EOF
           cat Reader_details.txt | wc -l
@@ -55,7 +62,7 @@ jobs:
           cat url.json
           # Remove leading and trailing "|" from the file
           sed -i 's/^ *| *//; s/ *| *$//' url.json
-          reader_url=`jq -r '.url' url.json`
+          reader_url=$(jq -r '.url' url.json)
           echo ""
           echo "reader_url: $reader_url"
           reader_url_trimmed=$(echo "$reader_url" | sed 's#https://##;s#\.snowflakecomputing\.com##')
@@ -64,16 +71,16 @@ jobs:
           SNOWSQL_ACCOUNT="$reader_url_trimmed"
           SNOWSQL_USER=ADMIN
           SNOWSQL_ROLE=ACCOUNTADMIN
-          SNOWSQL_PWD="${{ env.SNOWSQL_ADMIN_PASSWORD }}"
+          SNOWSQL_PWD="$SNOWSQL_ADMIN_PASSWORD"
           ~/snowflake/snowsql << EOF
           select current_account();
-          create or replace warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH;
+          create or replace warehouse $SNOWSQL_CUST_SHORT_NAME\_WH;
           create or replace role EVAL_READER_ROLE;
           create or replace role EDC_READER_ROLE;
           create or replace role ONCORE_READER_ROLE;
-          grant usage on warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH to role EVAL_READER_ROLE;
-          grant usage on warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH to role EDC_READER_ROLE;
-          grant usage on warehouse ${{ env.SNOWSQL_CUST_SHORT_NAME }}_WH to role ONCORE_READER_ROLE;
+          grant usage on warehouse $SNOWSQL_CUST_SHORT_NAME\_WH to role EVAL_READER_ROLE;
+          grant usage on warehouse $SNOWSQL_CUST_SHORT_NAME\_WH to role EDC_READER_ROLE;
+          grant usage on warehouse $SNOWSQL_CUST_SHORT_NAME\_WH to role ONCORE_READER_ROLE;
           create database ADVARRA_ONCORE_WORKSPACE;
           create schema ADVARRA_ONCORE_WORKSPACE.VIEWS_WORKSPACE;
           grant usage on database ADVARRA_ONCORE_WORKSPACE to role ONCORE_READER_ROLE;
