@@ -11,6 +11,13 @@ env:
   
 on:
   workflow_dispatch:
+    inputs:
+      admin_password:
+        description: 'Admin Password'
+        required: true
+      cust_short_name:
+        description: 'Customer Short Name'
+        required: true
 
 jobs:
   executequery:
