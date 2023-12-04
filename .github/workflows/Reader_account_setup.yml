@@ -84,6 +84,6 @@ jobs:
           create database WORKSPACE_CLOUD_ONCORE;
           create schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE;
           grant usage on database WORKSPACE_CLOUD_ONCORE to role ONCORE_READER_ROLE;
-          grant usage on schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE;
+          grant usage on schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE to role ONCORE_READER_ROLE;
           grant create view on schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE to role ONCORE_READER_ROLE;
           EOF
