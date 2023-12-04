@@ -78,10 +78,10 @@ jobs:
           create or replace role EVAL_READER_ROLE;
           create or replace role EDC_READER_ROLE;
           create or replace role ONCORE_READER_ROLE;
-          grant usage on warehouse $SNOWSQL_CUST_SHORT_NAME\_WH to role EVAL_READER_ROLE;
-          grant usage on warehouse $SNOWSQL_CUST_SHORT_NAME\_WH to role EDC_READER_ROLE;
-          grant usage on warehouse $SNOWSQL_CUST_SHORT_NAME\_WH to role ONCORE_READER_ROLE;
-          create database ADVARRA_ONCORE_WORKSPACE;
+          grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role EVAL_READER_ROLE;
+          grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role EDC_READER_ROLE;
+          grant usage on warehouse "${{ vars.SNOWSQL_CUST_SHORT_NAME }}_WH" to role ONCORE_READER_ROLE;
+          create database WORKSPACE_CLOUD_ONCORE;
           create schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE;
           grant usage on database WORKSPACE_CLOUD_ONCORE to role ONCORE_READER_ROLE;
           grant usage on schema WORKSPACE_CLOUD_ONCORE.VIEWS_WORKSPACE;
